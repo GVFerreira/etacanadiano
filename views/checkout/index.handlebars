@@ -1,0 +1,178 @@
+<link rel="stylesheet" href="/css/checkout.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+
+<main>
+    <div class="container container__payment">
+        <div class="py-5 text-center">
+            {{!-- <img class="d-block mx-auto mb-4" src="/img/mercadopago-logo.webp" alt="" width="auto" height="57"> --}}
+            <h1>Checkout</h1>
+            <p class="lead">
+                Está página está protegida por todas as etapas de segurança do Stripe
+            </p>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-md-6 col-lg-5 order-md-last">
+                <h2 class="h-3 d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary">Sua compra</span>
+                </h2>
+
+                <ul class="list-group mb-3">
+                    {{#each aplicacoes}}
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">Solicitação de Autorização de Viagem</h6>
+                                <small class="text-muted">{{codeETA}} - {{firstName}} {{surname}}</small>
+                            </div>
+                            <span class="text-muted totalAmount1"></span>
+                        </li>
+                    {{/each}}
+                    {{!-- ELEMENTO PARA EXIBIÇÃO DO DESCONTO DE CÓDIGO PROMOCIONAL --}}
+                    {{!-- <li class="list-group-item d-flex justify-content-between bg-light">
+                        <div class="text-success">
+                        <h6 class="my-0">Promo code</h6>
+                        <small>EXAMPLECODE</small>
+                        </div>
+                        <span class="text-success">−$5</span>
+                    </li> --}}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (€)</span>
+                        <strong id="totalAmount2"></strong>
+                    </li>
+                </ul>
+
+                {{!-- INPUT VALIDAÇÃO DE CÓDIGO PROMOCIONAL --}}
+                {{!--
+                    <form class="card p-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Promo code">
+                            <button type="submit" class="btn btn-secondary">Redeem</button>
+                        </div>
+                    </form>
+                --}}
+
+                <a href="/aplicacao?again=true" class="btn btn-success fw-bold text-uppercase">Adicionar mais uma solicitação <i class="bi bi-plus-circle ms-2"></i></a>
+            </div>
+
+            <div class="col-md-6 col-lg-7">
+                <h2 class="h-3 mb-3">Métodos de pagamento</h2>
+                <!-- PAGAMENTO COM CARTÃO DE CRÉDITO -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h4 fs-3">Pagamento com Stripe</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="payment-form" data-secret="{{client_secret}}">
+                            <div id="payment-element"></div>
+
+                            <button id="submit" class="btn btn-success fw-bold text-uppercase mt-3">Pagar</button>
+                        </form>
+                        
+                        <div id="error-message" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{!-- Modal do exit intent --}}
+    <div id="exitModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Espere!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você tem certeza de que deseja cancelar sua aplicação e perder a oportunidade de ter a nossa ajuda para emitir o seu eTA, vencendo a burocracia e tendo muito mais agilidade?</p>
+
+                    <p>Todos os dias nós identificamos erros de preenchimento de nossos clientes, que iriam complicar a emissão do eTA. Nós te ajudamos com isso.</p>
+
+                    <p>Além disso, 99% dos nossos clientes têm seu eTA aprovado em poucas horas.</p>
+
+                    <p>O valor de apenas €49,00 já inclui a taxa do governo canadiano e o valor da nossa prestação de serviços para assessoria individual na aplicação do seu eTA.</p>
+
+                    <p>Para confirmar o seu interesse no eTA, clique no botão abaixo para retornar ao checkout.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{!-- STRIPE PAYMENT --}}
+<script defer>
+    const stripe = Stripe("{{publishable_key}}")
+
+    const options = {
+        clientSecret: "{{client_secret}}",
+        appearance: {
+            theme:'flat',
+            variables: {
+                colorPrimaryText: '#17233D'
+            } 
+        }
+    }
+
+    // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in a previous step
+    const elements = stripe.elements(options)
+
+    // Create and mount the Payment Element
+    const paymentElement = elements.create('payment')
+    paymentElement.mount('#payment-element')
+
+    const form = document.getElementById('payment-form')
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault()
+
+        const {error} = await stripe.confirmPayment({
+            //`Elements` instance that was used to create the Payment Element
+            elements,
+            confirmParams: {
+                return_url: 'http://localhost:3040/checkout/status'
+            }
+        })
+
+        if (error) {
+            // This point will only be reached if there is an immediate error when
+            // confirming the payment. Show error to your customer (for example, payment
+            // details incomplete)
+            console.log(error.message)
+            const messageContainer = document.getElementById('error-message')
+            messageContainer.innerHTML = `<p class="d-inline-block alert alert-danger p-1">${error.message}</p>`
+        } else {
+            // Your customer will be redirected to your `return_url`. For some payment
+            // methods like iDEAL, your customer will be redirected to an intermediate
+            // site first to authorize the payment, then redirected to the `return_url`.
+        }
+    })
+</script>
+
+{{!-- SECONDARY SCRIPTS --}}
+<script>
+    //Exit intent
+    let mouseout = 1
+    function showExitModal() {
+        $('#exitModal').modal('show')
+    }
+
+    document.addEventListener('mouseout', (e) => {
+        if (e.relatedTarget === null) {
+            if (mouseout) {
+                showExitModal()
+                mouseout--
+            }
+        }
+    })
+
+
+    //Atualizar valor em tela
+    $(document).ready(function() {
+        $('.totalAmount1').text('€49,00')
+        const total = parseInt("{{qtyVisas}}") * 49
+        $('#totalAmount2').text(`${total.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+    })
+</script>

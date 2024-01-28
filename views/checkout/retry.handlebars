@@ -1,0 +1,196 @@
+<link rel="stylesheet" href="/css/checkout.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<main>
+    <div class="container container__payment">
+        <div class="py-5 text-center">
+            <img class="d-block mx-auto mb-4" src="/img/mercadopago-logo.webp" alt="" width="auto" height="57">
+            <h1>Checkout</h1>
+            <p class="lead">
+                Está página está protegida por todas as etapas de segurança do Stripe
+            </p>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-md-6 col-lg-5 order-md-last">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary">Sua compra</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Solicitação de Autorização de Viagem</h6>
+                            <small class="text-muted">Permissão para viajar ao Canadá</small>
+                        </div>
+                        <span class="text-muted" id="totalAmount1">R$ 147,00</span>
+                    </li>
+                    {{!-- ELEMENTO PARA EXIBIÇÃO DO DESCONTO DE CÓDIGO PROMOCIONAL --}}
+                    {{!-- <li class="list-group-item d-flex justify-content-between bg-light">
+                        <div class="text-success">
+                        <h6 class="my-0">Promo code</h6>
+                        <small>EXAMPLECODE</small>
+                        </div>
+                        <span class="text-success">−$5</span>
+                    </li> --}}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (R$)</span>
+                        <strong id="totalAmount2">147,00</strong>
+                    </li>
+                </ul>
+
+                {{!-- INPUT VALIDAÇÃO DE CÓDIGO PROMOCIONAL --}}
+                {{!-- <form class="card p-2">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Promo code">
+                    <button type="submit" class="btn btn-secondary">Redeem</button>
+                </div>
+                </form> --}}
+
+            </div>
+            <div class="col-md-6 col-lg-7">
+                <h4 class="mb-3">Métodos de pagamento</h4>
+
+                <div class="accordion w-md-75 m-auto" id="accordionExample">
+                    <!-- PAGAMENTO COM CARTÃO DE CRÉDITO -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="fs-3 accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAGAMENTO COM PIX -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="fs-3 accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">                      
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{!-- MOdal do exit intent --}}
+    <div id="exitModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Espere!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você tem certeza de que deseja cancelar sua aplicação e perder a oportunidade de ter a nossa ajuda para emitir o seu eTA, vencendo a burocracia e tendo muito mais agilidade?</p>
+
+                    <p>Todos os dias nós identificamos erros de preenchimento de nossos clientes, que iriam complicar a emissão do eTA. Nós te ajudamos com isso.</p>
+
+                    <p>Além disso, 99% dos nossos clientes têm seu eTA aprovado em poucas horas.</p>
+
+                    <p>O valor de apenas R$ 147,00 já inclui a taxa do governo canadiano e o valor da nossa prestação de serviços para assessoria individual na aplicação do seu eTA.</p>
+
+                    <p>Para confirmar o seu interesse no eTA, clique no botão abaixo para retornar ao checkout.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{!-- Script para Cartão de Crédito --}}
+<script defer>
+    fetch("/checkout/process-payment", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            token,
+            issuerId,
+            paymentMethodId,
+            transactionAmount: Number(amount),
+            installments: Number(installments),
+            description: "Solicitação de Autorização de Viagem - Canadá",
+            payer: {
+                email,
+                identification: {
+                    type: identificationType,
+                    number: identificationNumber
+                }
+            }
+        })
+    })  
+        .then((response) => { return response.json()})
+        .then((response) => {
+            switch(response.status) {
+                case 'approved':
+                    window.location.href = `/checkout/obrigado?status_detail=${response.detail}&status=${response.status}&transaction_id=${response.id}`
+                    break
+                
+                case 'rejected':
+                    window.location.href = `/checkout/recusado?status_detail=${response.detail}&status=${response.status}&transaction_id=${response.id}`
+                    break
+                
+                default:
+                    window.location.href = `/checkout/em_processo?status_detail=${response.detail}&status=${response.status}&transaction_id=${response.id}`
+            }
+        })
+        .catch(e => {
+            console.error(e)
+            alert(e)
+        })
+                
+</script>
+
+{{!-- Scripts secundário --}}
+<script>
+    //Exit intent
+    let mouseout = 1
+    function showExitModal() {
+        $('#exitModal').modal('show')
+    }
+
+    document.addEventListener('mouseout', (e) => {
+        if (e.relatedTarget === null) {
+            if (mouseout) {
+                showExitModal()
+                mouseout--
+            }
+        }
+    })
+
+
+    //Atualizar valor em tela
+    const qtyVisas = "{{qtyVisas}}"
+    const total = parseInt(qtyVisas) * 147
+    $('#totalAmount2').text(`${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+    $(document).ready(function() {
+        $('#collapseTwo').on('show.bs.collapse', function() {
+            $('.totalAmount1').text('R$ 139,65')
+            const qtyVisas = "{{qtyVisas}}"
+            const total = parseInt(qtyVisas) * 139.65
+            $('#totalAmount2').text(`${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+
+        })
+
+        $('#collapseTwo').on('hide.bs.collapse', function() {
+            $('.totalAmount1').text('R$ 147,00')
+            const qtyVisas = "{{qtyVisas}}"
+            const total = parseInt(qtyVisas) * 147
+            $('#totalAmount2').text(`${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+
+        })
+    })
+</script>

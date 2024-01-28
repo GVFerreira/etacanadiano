@@ -1,0 +1,63 @@
+<main style="flex: 1 1 0">
+    <section class="section-1 full-width py-5">
+        <div class="container d-flex justify-content-center px-5">  
+            <div class="card w-50 my-5">
+                <div class="card-header">
+                    <h3 class="text-center">Login</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/users/login" method="POST">
+                        <label for="email">E-mail:</label>
+                        <input type="email" name="email" class="form-control mb-4" autofocus required>
+
+                        <label for="password">Senha:</label>
+                        <div class="input-group mb-5">
+                            <input type="password" name="password" id="password" class="form-control" aria-label="Recipient's password" aria-describedby="basic-addon2" required>
+                            <span class="input-group-text" onclick="showPassword(event)" id="basic-addon2" style="cursor: pointer"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Entrar</button>
+                    </form>
+                    <br>
+                    <span>Não possui conta? Entre em contato com o administrador do sistema</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<style>
+    @media(max-width: 764px) {
+        main {
+            margin: 0 !important;
+        }
+
+        main .container {
+            margin: 0 !important;
+            padding: 0 1.2rem !important;
+        }
+
+        main .card {
+            width: 100% !important;
+            margin: 1.2rem 0 !important;
+        }
+    }
+</style>
+<script>
+    const buttonShow = document.getElementById('basic-addon2')
+    buttonShow.innerHTML = `
+        <i class="bi bi-eye-slash-fill"></i>
+    `
+    function showPassword(event) {
+        event.preventDefault()
+        const inputPassword = document.getElementById('password')
+        
+
+        if(inputPassword.type === 'password') {
+            inputPassword.setAttribute("type", "text")
+            buttonShow.innerHTML = '<i class="bi bi-eye-fill"></i>'
+        } else {
+            inputPassword.setAttribute("type", "password")
+            buttonShow.innerHTML = '<i class="bi bi-eye-slash-fill"></i></span>'
+        }
+    }
+</script>

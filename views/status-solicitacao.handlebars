@@ -1,0 +1,72 @@
+<main style="flex: 1 1 0">
+    <section class="section-1 full-width py-5">
+        <div class="container">
+            <h1>Acompanhar solicitação</h1>
+            <hr>
+            <div class="card">
+                <div class="card-body">
+                    <form action="/consultando-solicitacao" method="POST">
+                        <h2>Verifique o status da sua solicitação</h2>
+                        <p>Insira o seu e-mail ou código para consultar o progresso da sua aplicação.</p>
+                        <div class="row">
+                            <div class="col">
+                                <label for="EmailCod">Escolha:</label>
+                                <select class="form-select w-50 mb-3" name="EmailCod" id="EmailCod" required>
+                                    <option value="" selected disabled></option>
+                                    <option value="email">E-mail</option>
+                                    <option value="cod">Código</option>
+                                </select>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="codeInsert" name="codeInsert" placeholder="Seu e-mail ou código" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                    <button class="btn btn-dark" type="submit" id="button-addon2">Buscar<i class="ms-2 bi bi-search"></i></button>
+                                </div>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <section class="section-results">
+                        {{#each search_result}}
+                            <div class="px-3 py-4">
+                                <p><b>Nome: </b>{{firstName}} {{surname}}</p>
+                                <p><b>E-mail de contacto: </b>{{contactEmail}}</p>
+                                <p><b>Telefone de contacto: </b>{{contactTel}}</p>
+                                <p>
+                                    <b>Pagamento: </b>
+                                    {{#if pagamento.status}}
+                                        {{#returnStatusMP pagamento.status}}{{/returnStatusMP}}
+                                        <p><b>Detalhes: </b>{{#returnDetailMP pagamento.status_details}}{{/returnDetailMP}}</p>
+                                    {{else}}
+                                        <span class="alert-danger p-1">Pagamento não efetuado</span>
+                                    {{/if}}
+                                </p>
+                                <p><b>Aprovado pelo Governo Canadiano: </b>{{statusETA}}</p>
+                                {{#if attachments}}
+                                    {{#each attachments}}
+                                        Clique aqui para fazer o download do seu doumento: <a href="/consulta-download-documento/{{filename}}">{{filename}}</a>
+                                    {{/each}}
+                                {{/if}}
+                            </div>
+                        {{else}}
+                            <h4 class="mb-5 text-center" style="color: #F00">Não há nenhum processo com esse código</h4>
+                        {{/each}}
+                    </section>
+                    <section class="mt-4 ps-2">
+                        <div style="display: flex; flex-direction: column; align-items: center">
+                            <p class="fs-3 fw-bold text-center">Garanta o seu <span class="text-info">SEGURO VIAGEM</span> com desconto agora mesmo neste link:</p>
+                            <a href="https://www.segurospromo.com.br/?utm_medium=afiliado&pcrid=10157&utm_source=site-blog&pcrtt=Acompanhamento" class="d-flex w-100">
+                                <img src="./img/seguro-viagem.JPG" alt="Seguro viagem" class="w-25" style="margin: 0 auto 4rem auto;">
+                            </a>
+                        </div>
+                        <h3>Sua solicitação não foi localizada? Entre em contacto connosco</h3>
+                        <a class="btn btn-primary text-uppercase" href="mailto:contacto@etacanadiano.pt"><i class="bi bi-envelope-fill me-1"></i>contacto@etacanadiano.pt</a>
+                    </section>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+</main>
+<link rel="stylesheet" href="./css/acompanhar.css">

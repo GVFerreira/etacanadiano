@@ -1,0 +1,317 @@
+h1 {
+    font-size: 2.2rem;
+}
+h2 {
+    font-size: 2rem;
+}
+.btn {
+    letter-spacing: 0.05rem;
+}
+
+/* main {
+
+}
+
+main section {
+
+} */
+
+main section.section-1 {
+    height: 400px;
+
+    background: url('/img/bg-main-index.webp') no-repeat center center;
+    background-size: cover;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main section.section-1 .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    color: #FFF;
+}
+
+main section.section-1 .container h1 {
+    font-size: 2.8rem;
+}
+
+main section.section-1 .container p {
+    font-size: 1.5rem;
+}
+
+main section.section-1 .container .btn {
+    animation: swing .75s linear;
+    animation-delay: 200ms;
+}
+
+@keyframes swing {
+    0% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+main section.section-2 {
+    background: url('/img/silhouette-city.webp') no-repeat right bottom;
+    background-size: contain;
+    background-color: #17233D;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main section.section-2 .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    color: #FFF;
+}
+
+/* main section.section-2 .container button {
+
+} */
+
+main section.section-3 {
+    background-color: #FFF;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main section.section-3 .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+main section.section-3 .container p {
+    font-size: .9rem;
+}
+
+main section.section-3 .container ul {
+    padding: 0;
+    margin: 1.5rem 0;
+
+    list-style: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+main section.section-3 .container ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .8rem
+}
+
+main section.section-3 .container ul li div p {
+    margin: 0;
+}
+
+main section.section-4 {
+    background-color: #E6E8F8;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main section.section-4 .container {
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+}
+
+main section.section-4 .container .row {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: column;
+}
+
+main section.section-4 .container dl dt {
+    background-color: #FFF;
+    width: 100%;
+    padding: .5rem;
+    margin-bottom: 1.25rem;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+
+main section.section-4 .container dl dd {
+    width: 100%;
+    height: 100%;
+    margin: 0 .25rem 1.5rem .25rem;
+}
+main section.section-4 .container dl dd {
+    display: none; 
+}
+main section.section-4 .container dl dt::before {
+    content: '+  ';
+    margin-left: 10px;
+}
+main section.section-4 .container dl dt.ativo::before {
+    content: '-  ';
+}
+main section.section-4 .container dl dd.ativo {
+    display: block;
+    animation: slideDown .5s forwards;
+}
+
+main section.section-5 {
+    background-color: #FFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main section.section-5 .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+main section.section-5 .container dl {
+    width: 75%;
+}
+
+main section.section-5 .container dl dt {
+    background-color: #E6E8F8;
+
+    padding: .5rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+main section.section-5 .container dl dd {
+    height: 100%;
+    margin: 0 .5rem 1.5rem .5rem;
+}
+main section.section-5 .container dl dd {
+    display: none; 
+}
+main section.section-5 .container dl dt::before {
+    content: '+  ';
+    margin-left: 10px;
+}
+main section.section-5 .container dl dt.ativo::before {
+    content: '-  ';
+}
+main section.section-5 .container dl dd.ativo {
+    display: block;
+    animation: slideDown .5s forwards;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        max-height: 450px;
+        opacity: 1;
+    }
+}
+/* 
+main section.section-5 .container a {
+} */
+
+@media(min-width: 600px) {
+    main section.section-1 {
+        height: 500px;
+
+        background: url('/img/bg-main-index-desktop.webp') no-repeat center bottom;
+        background-size: cover;
+    }
+
+    main section.section-3 .container ul {
+        display: flex;
+        flex-direction: row;
+    }
+
+    main section.section-3 .container ul li{
+        width: 33%;
+    }
+
+    main section.section-4 .container .row {
+        width: 100%;
+        
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+@media(max-width: 600px) {
+    main section.section-4 {
+        justify-content: center !important;
+        align-items: center !important;
+        flex-direction: column !important;
+    }
+
+    main section.section-4 .container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    main section.section-4 .container #countryAll {
+        display: none;
+    }
+
+    main section.section-4 .container #countryAccordion,
+    main section.section-4 .container #countryAccordion dl {
+        width: 100% !important;
+    }
+
+    main section.section-4 .container #countryAccordion dl .ativo.europe {
+        display: flex;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+        overflow: auto;
+    }
+
+    main section.section-4 .container #countryAccordion dl .ativo.europe p {
+        margin: 0;
+    }
+    
+    main section.section-4 .container #countryAccordion dl dt {
+        width: 100% !important;
+    }
+
+    main section.section-4 .container #countryAccordion {
+        display: block !important;
+    }
+
+    main section.section-5 .container dl {
+        width: 100%;
+    }
+}

@@ -1,0 +1,193 @@
+<style>
+    @media(max-width: 576px) {
+        .w-50 {
+            width: 100% !important;
+        }
+
+        .w-25 {
+            width: 50% !important;
+        }
+
+        .progress-bar {
+            font-size: .6rem !important;
+        }
+    }
+    
+    label {
+        font-weight: bold;
+    }
+    .form-check-label {
+        font-weight: 400;
+    }
+    .text-red {
+        color: #FF0000
+    }
+</style>
+<main style="flex: 1 1 0">
+    <section class="section-1 py-5">
+        <div class="container py-3">
+            <h1>Solicitação de Autorização Eletrônica de Viagem (eTA)</h1>
+            <hr>
+            {{#each errors}}
+                <div class="alert alert-danger">{{text}}</div>
+            {{else}}
+            {{/each}}
+            <h2>Progresso da sua solicitação</h2>
+            <div class="progress mt-3 mb-5" style="height: 25px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">1. Representante</p>
+                </div>
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">2. Validação</p>
+                </div>
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">3. Documentos</p>
+                </div>
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">4. Conferência</p>
+                </div>
+            </div>
+            <form action="/aplicacaoStep1" method="POST">
+                <label class="mb-2" for="representative">Você é responsável ou representante que apresenta a solicitação de eTA em nome de outra pessoa? <span class="text-red">* (obrigatório)</span></label>
+                <select class="form-select w-50 mb-3" name="representative" id="representative" onchange="showFields(this.value)" required>
+                    <option value="" selected disabled>Selecione</option>
+                    <option value="0">Não</option>
+                    <option value="1">Sim</option>
+                </select>
+                <div class="mb-3" id="dynamicFields"></div>
+                <input class="btn btn-success mt-5" type="submit" value="Próximo">
+            </form>
+        </div>
+    </section>
+</main>
+<script>
+    function showFields(type) {
+        let dynamicFields = document.getElementById('dynamicFields')
+        dynamicFields.innerHTML = ''
+
+        if (type === '') {
+            dynamicFields.innerHTML += '<span class="text-red">Selecione alguma das opções acima</span>'
+        } else if (type === '1') {
+            dynamicFields.innerHTML += '<h2>Detalhes do responsável ou representante</h2><hr>'
+            dynamicFields.innerHTML += `
+                <label for="representativeRelationship">Eu sou <span class="text-red">* (obrigatório)</span></label>
+                <select class="form-select w-50 mb-3" name="representativeRelationship" id="representativeRelationship" onchange="relationType(this.value)" required>
+                    <option selected disabled>Selecione</option>
+                    <option value="Parente ou amigo">Parente ou amigo</option>
+                    <option value="Membro de uma organização não governamental ou religiosa">Membro de uma organização não governamental ou religiosa</option>
+                    <option value="Membro do Conselho Regulatório de Consultores de Imigração (ICCRC)">Membro do Conselho Regulatório de Consultores de Imigração (ICCRC)</option>
+                    <option value="Uma sociedade jurídica provincial ou territorial do Canadá">Uma sociedade jurídica provincial ou territorial do Canadá</option>
+                    <option value="A Câmara de Notários do Quebec">A Câmara de Notários do Quebec</option>
+                    <option value="Agente de viagens">Agente de viagens</option>
+                </select>
+
+                <label for="representativePayed">Você está sendo pago para representar o requerente e preencher o formulário em seu nome? <span class="text-red">* (obrigatório)</span></label>
+                <select class="form-select w-50 mb-3" name="representativePayed" id="representativePayed" required>
+                    <option value="" selected disabled>Selecione</option>
+                    <option value="0">Não</option>
+                    <option value="1">Sim</option>
+                </select>
+                <div id="relationFields"></div>
+            `
+        }
+    }
+
+    function relationType(type) {
+        let relationFields = document.getElementById('relationFields')
+        relationFields.innerHTML = ''
+        
+        if(type === '') {
+            relationFields.innerHTML += '<span class="text-red">Selecione alguma das opções acima</span>'
+        } else if (type === 'Parente ou amigo') {
+            relationFields.innerHTML += `
+                <label for="representativeName">Nome: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeName" id="representativeName" value="{{data.representativeName}}" required>
+
+                <label for="representativeSurname">Sobrenome(s): <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeSurname" id="representativeSurname" value="{{data.representativeSurname}}" required>
+
+                <label for="representativeAddress">Endereço: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeAddress" id="representativeAddress" value="{{data.representativeAddress}}" required>
+
+                <label for="representativeEmail">E-mail: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="email" name="representativeEmail" id="representativeEmail" value="{{data.representativeEmail}}" required>
+
+                <label for="representativeNumTel">Número de telefone: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeNumTel" id="representativeNumTel" value="{{data.representativeNumTel}}" required>
+            `
+        } else if (type === 'Membro de uma organização não governamental ou religiosa' || type === 'Agente de viagens') {
+            relationFields.innerHTML += `
+                <label for="representativeName">Nome: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeName" id="representativeName" value="{{data.representativeName}}" required>
+
+                <label for="representativeSurname">Sobrenome(s): <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeSurname" id="representativeSurname" value="{{data.representativeSurname}}" required>
+
+                <label for="representativeOrgName">Nome da empresa: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeOrgName" id="representativeOrgName" value="{{data.representativeOrgName}}" required>
+
+                <label for="representativeAddress">Endereço: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeAddress" id="representativeAddress" value="{{data.representativeAddress}}" required>
+
+                <label for="representativeEmail">E-mail: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="email" name="representativeEmail" id="representativeEmail" value="{{data.representativeEmail}}" required>
+
+                <label for="representativeNumTel">Número de telefone: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeNumTel" id="representativeNumTel" value="{{data.representativeNumTel}}" required>
+            `
+        } else if (type === 'Membro do Conselho Regulatório de Consultores de Imigração (ICCRC)' || type === 'Uma sociedade jurídica provincial ou territorial do Canadá') {
+            relationFields.innerHTML += `
+                <label for="representativeNumIDmebro">Número de identificação de membro: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeNumIDmebro" id="representativeNumIDmebro" value="{{data.representativeNumIDmebro}}" required>
+
+                <label for="representativeProvOrTer">Província ou território: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeProvOrTer" id="representativeProvOrTer" value="{{data.representativeProvOrTer}}" required>
+
+                <label for="representativeName">Nome: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeName" id="representativeName" value="{{data.representativeName}}" required>
+
+                <label for="representativeSurname">Sobrenome(s): <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeSurname" id="representativeSurname" value="{{data.representativeSurname}}" required>
+
+                <label for="representativeOrgName">Nome da empresa: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeOrgName" id="representativeOrgName" value="{{data.representativeOrgName}}" required>
+
+                <label for="representativeAddress">Endereço: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeAddress" id="representativeAddress" value="{{data.representativeAddress}}" required>
+
+                <label for="representativeCodpostal">Código postal: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeCodpostal" id="representativeCodpostal" value="{{data.representativeCodpostal}}" required>
+
+                <label for="representativeEmail">E-mail: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="email" name="representativeEmail" id="representativeEmail" value="{{data.representativeEmail}}" required>
+
+                <label for="representativeNumTel">Número de telefone: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeNumTel" id="representativeNumTel" value="{{data.representativeNumTel}}" required>
+            `
+        } else if (type === 'A Câmara de Notários do Quebec') {
+            relationFields.innerHTML += `
+                <label for="representativeNumIDmebro">Número de identificação de membro: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeNumIDmebro" id="representativeNumIDmebro" value="{{data.representativeNumIDmebro}}" required>
+                
+                <label for="representativeName">Nome: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeName" id="representativeName" value="{{data.representativeName}}" required>
+
+                <label for="representativeSurname">Sobrenome(s): <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeSurname" id="representativeSurname" value="{{data.representativeSurname}}" required>
+
+                <label for="representativeOrgName">Nome da empresa: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeOrgName" id="representativeOrgName" value="{{data.representativeOrgName}}" required>
+
+                <label for="representativeAddress">Endereço: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeAddress" id="representativeAddress" value="{{data.representativeAddress}}" required>
+
+                <label for="representativeEmail">E-mail: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="email" name="representativeEmail" id="representativeEmail" value="{{data.representativeEmail}}" required>
+                
+                <label for="representativeNumTel">Número de telefone: <span class="text-red">* (obrigatório)</span></label>
+                <input class="form-control mb-3 w-50" type="text" name="representativeNumTel" id="representativeNumTel" value="{{data.representativeNumTel}}" required>
+            `
+        }
+    }
+
+</script>

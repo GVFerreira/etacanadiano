@@ -1,0 +1,660 @@
+<style>
+    @media(max-width: 576px) {
+        .w-50 {
+            width: 100% !important;
+        }
+
+        .w-25 {
+            width: 50% !important;
+        }
+        .progress-bar {
+            font-size: .6rem !important;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+    label {
+        font-weight: bold;
+    }
+    .text-red {
+        color: #FF0000
+    }
+</style>
+<main style="flex: 1 1 0">
+    <section class="section-1 py-5">
+        <div class="container py-3">
+            <h1>Solicitação de Autorização Eletrônica de Viagem (eTA)</h1>
+            <hr>
+            {{#each errors}}
+                <div class="alert alert-danger">{{text}}</div>
+            {{else}}
+            {{/each}}
+            <h2>Progresso da sua solicitação</h2>
+            <div class="progress mt-3 mb-5" style="height: 25px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">1. Representante</p>
+                </div>
+                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">2. Validação</p>
+                </div>
+                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">3. Documentos</p>
+                </div>
+                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <p class="m-0 p-0">4. Conferência</p>
+                </div>
+            </div>
+            <h2 class="mb-5">Confira as informações respondidas anteriormente</h2>
+            
+            <form action="/aplicacaoStep4" method="POST">
+                {{#if data.representative}}
+                    <h3 class="h4">Dados do representante</h3>
+                    <label class="mb-2" for="representative">Você é responsável ou representante que apresenta a solicitação de eTA em nome de outra pessoa?</label>
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="representative" id="representative1" value="0" disabled required>
+                            <label class="form-check-label" for="representative1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="representative" id="representative2"value="1" checked required>
+                            <label class="form-check-label" for="representative2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+
+                    <label for="representativeRelationship">Eu sou</label>
+                    <select class="form-select w-50 mb-3" name="representativeRelationship" id="representativeRelationship" required disabled>
+                        <option value="{{data.representativeRelationship}}">{{data.representativeRelationship}}</option>
+                    </select>
+
+                    <label for="payed">Você está sendo pago para representar o requerente e preencher o formulário em seu nome?</label>
+                    {{#if data.representativePayed}}
+                        <div class="p-2 w-50 d-flex flex-row gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="representativePayed" id="representativePayed1" value="0" disabled required>
+                                <label class="form-check-label" for="representativePayed1">
+                                    Não
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="representativePayed" id="representativePayed2"value="1" checked required>
+                                <label class="form-check-label" for="representativePayed2">
+                                    Sim
+                                </label>
+                            </div>
+                        </div>
+                    {{else}}
+                        <div class="p-2 w-50 d-flex flex-row gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="representativePayed" id="representativePayed1" value="0" checked required>
+                                <label class="form-check-label" for="representativePayed1">
+                                    Não
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="representativePayed" id="representativePayed2"value="1" disabled required>
+                                <label class="form-check-label" for="representativePayed2">
+                                    Sim
+                                </label>
+                            </div>
+                        </div>
+                    {{/if}}
+                    <label for="representativeName">Nome:</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeName" id="representativeName" value="{{data.representativeName}}" required disabled>
+
+                    <label for="representativeSurname">Sobrenome(s):</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeSurname" id="representativeSurname" value="{{data.representativeSurname}}" required disabled>
+
+                    <label for="representativeOrgName">Nome da empresa:</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeOrgName" id="representativeOrgName" value="{{data.representativeOrgName}}" required disabled>
+
+                    <label for="representativeAddress">Endereço:</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeAddress" id="representativeAddress" value="{{data.representativeAddress}}" required disabled>
+
+                    <label for="representativeEmail">E-mail:</label>
+                    <input class="form-control mb-3 w-50" type="email" name="representativeEmail" id="representativeEmail" value="{{data.representativeEmail}}" required disabled>
+
+                    <label for="representativeNumTel">Número de telefone:</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeNumTel" id="representativeNumTel" value="{{data.representativeNumTel}}" required disabled>
+
+                    <label for="representativeNumIDmebro">Número de identificação de membro:</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeNumIDmebro" id="representativeNumIDmebro" value="{{data.representativeNumIDmebro}}" required disabled>
+
+                    <label for="representativeProvOrTer">Província ou território:</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeProvOrTer" id="representativeProvOrTer" value="{{data.representativeProvOrTer}}" required disabled>
+
+                    <label for="representativeCodpostal">Código postal:</label>
+                    <input class="form-control mb-3 w-50" type="text" name="representativeCodpostal" id="representativeCodpostal" value="{{data.representativeCodpostal}}" required disabled>
+                
+                    <a href="/aplicacao" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+                {{/if}}
+                
+                <hr>
+
+                <h3 class="h4">Perguntas de validação</h3>
+
+                <label class="mb-2" for="document">Qual documento de viagem você pretende usar para viajar ao Canadá?</label>
+                <select class="form-select w-50 mb-3" name="document" id="document" required disabled>
+                    <option value="Passaporte – comum/regular">Passaporte – comum/regular</option>
+                </select>
+
+                <label for="codPassport" class="mt-3">Selecione o código que corresponde ao do seu passaporte</label>
+                <p class="m-0">
+                    <small>Verifique o código de três letras que encontra-se na página de informações do seu passaporte.</small>
+                </p>
+                <select name="codPassport" id="codPassport" class="form-select w-50 mb-3" required disabled>
+                    <option value="{{data.codPassport}}">{{data.codPassport}}</option>
+                </select>
+
+                <label for="nationalityPassport" class="mt-3">Qual é a nacionalidade indicada neste passaporte?</label>
+                <select name="nationalityPassport" id="nationalityPassport" class="form-select w-50 mb-3" disabled required>
+                    <option value="" selected disabled>Selecione</option>
+                    <option value="Alemanha">Alemanha</option>
+                    <option value="Andorra">Andorra</option>
+                    <option value="Antígua e Barbuda">Antígua e Barbuda</option>
+                    <option value="Austrália">Austrália</option>
+                    <option value="Áustria">Áustria</option>
+                    <option value="Bahamas">Bahamas</option>
+                    <option value="Barbados">Barbados</option>
+                    <option value="Bélgica">Bélgica</option>
+                    <option value="Brasil">Brasil</option>
+                    <option value="Brunei Darussalam">Brunei Darussalam</option>
+                    <option value="Chipre">Chipre</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Croácia">Croácia</option>
+                    <option value="Dinamarca">Dinamarca</option>
+                    <option value="Eslováquia">Eslováquia</option>
+                    <option value="Eslovênia">Eslovênia</option>
+                    <option value="Espanha">Espanha</option>
+                    <option value="Estônia">Estônia</option>
+                    <option value="Finlândia">Finlândia</option>
+                    <option value="França">França</option>
+                    <option value="Grécia">Grécia</option>
+                    <option value="Holanda">Holanda</option>
+                    <option value="Hungria">Hungria</option>
+                    <option value="Ilhas Salomão">Ilhas Salomão</option>
+                    <option value="Islândia">Islândia</option>
+                    <option value="Irlanda">Irlanda</option>
+                    <option value="Itália">Itália</option>
+                    <option value="Japão">Japão</option>
+                    <option value="Coréia do Sul">Coréia do Sul</option>
+                    <option value="Liechtenstein">Liechtenstein</option>
+                    <option value="Lituânia">Lituânia</option>
+                    <option value="Luxemburgo">Luxemburgo</option>
+                    <option value="Letônia">Letônia</option>
+                    <option value="Mônaco">Mônaco</option>
+                    <option value="Noruega">Noruega</option>
+                    <option value="Nova Zelândia">Nova Zelândia</option>
+                    <option value="Papua Nova Guiné">Papua Nova Guiné</option>
+                    <option value="Polônia">Polônia</option>
+                    <option value="Portugal">Portugal</option>
+                    <option value="República Checa">República Checa</option>
+                    <option value="Samoa">Samoa</option>
+                    <option value="São Marino">São Marino</option>
+                    <option value="Singapura">Singapura</option>
+                    <option value="Suécia">Suécia</option>
+                    <option value="Suíça">Suíça</option>
+                </select>
+
+                {{#verifyCodPassportStep data.codPassport data.residentUSCIS data.airplane data.canadaVisa data.nonImmigrateVisa}}{{/verifyCodPassportStep}}
+
+                <a href="/aplicacao?etapa=2" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+
+
+                <hr>
+
+                {{#if nonImmigrateVisa}}
+                    <h3 class="h4">Dados de Não-Imigrante</h3>
+
+                    <label class="mb-2" for="numVisaNonImmigrate">Número do visto de não imigrante nos EUA</label>
+                    <input type="text" class="form-control mb-3 w-50" name="numVisaNonImmigrate" id="numVisaNonImmigrate" value="{{data.numVisaNonImmigrate}}" maxlength="35" disabled required>
+                    
+                    <label class="mb-2" for="dateVisaNonImmigrate">Data de expiração do visto americano de não-imigrante</label>
+                    <input type="date" class="form-control mb-3 w-25" id="dateVisaNonImmigrate" name="dateVisaNonImmigrate" value="{{data.dateVisaNonImmigrate}}" disabled required>
+                    
+                    <a href="/aplicacao?etapa=3#numVisaNonImmigrate" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+
+                    <hr>
+                {{/if}}
+                
+                <h3 class="h4">Dados do passaporte do requerente</h3>
+
+                <label class="mb-2" for="numPassport">Número do passaporte</label>
+                <input type="text" class="form-control w-50 mb-3" name="numPassport" id="numPassport" value="{{data.numPassport}}" disabled required>
+
+                <label class="mb-2" for="doiPassport">Data de emissão do passaporte</label>
+                <input type="date" class="form-control mb-3 w-25" name="doiPassport" id="doiPassport" value="{{data.doiPassport}}" disabled required>
+
+                <label class="mb-2" for="doePassport">Data de expiração do passaporte</label>
+                <input type="date" class="form-control mb-3 w-25" name="doePassport" id="doePassport" value="{{data.doePassport}}" disabled required>
+
+                <label class="mb-2" for="firstName">Nome</label>
+                <input type="text" class="form-control w-50 mb-3" name="firstName" id="firstName" value="{{data.firstName}}" disabled required>
+
+                <label class="mb-2" for="surname">Sobrenome(s)</label>
+                <input type="text" class="form-control w-50 mb-3" name="surname" id="surname" value="{{data.surname}}" disabled required>
+
+                <label class="mb-2" for="dateBirthday">Data de Nascimento</label>
+                <input type="date" class="form-control mb-3 w-25" name="dateBirthday" id="dateBirthday" value="{{data.dateBirthday}}" disabled required>
+
+                <label class="mb-2" for="gender">Gênero</label>
+                <select class="form-select w-50 mb-3" name="gender" id="gender" required disabled>
+                    <option selected disabled>Selecione</option>
+                    <option value="Feminino">Feminino</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Outro">Outro</option>
+                </select>
+
+                <label class="mb-2" for="countryBirth">País/território de nascimento</label>
+                <select class="form-select w-50 mb-3" id="countryBirth" name="countryBirth" disabled required>
+                    <option value="{{data.countryBirth}}">{{data.countryBirth}}</option>
+                </select>
+                
+                <label class="mb-2" for="cityBirth">Cidade/município de nascimento</label>
+                <input type="text" name="cityBirth" id="cityBirth" class="form-control w-50 mb-3" value="{{data.cityBirth}}" disabled required>
+
+                <a href="/aplicacao?etapa=3#numPassport" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+
+                
+                <hr>
+
+                <h3 class="h4">Dados pessoais do requerente</h3>
+
+                <label class="mb-2" for="nationalitiesExtra">Nacionalidade adicional</label>
+                <input type="text" name="nationalitiesExtra" id="nationalitiesExtra" class="form-control w-50" value="{{data.nationalitiesExtra}}" disabled>
+
+                <label class="mb-2" for="maritalStatus">Estado civil</label>
+                <select class="form-select w-50 mb-3" name="maritalStatus" id="maritalStatus" disabled required>
+                    <option value="{{data.maritalStatus}}">{{data.maritalStatus}}</option>
+                </select>
+
+                <label class="mb-2">Você já solicitou ou obteve um visto, um eTA ou uma permissão para visitar, morar, trabalhar ou estudar no Canadá?</label>
+                {{#if data.appliedToCanada}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="appliedToCanada" id="appliedToCanada1" value="0" disabled required>
+                            <label class="form-check-label" for="appliedToCanada1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="appliedToCanada" id="appliedToCanada2"  value="1" checked required>
+                            <label class="form-check-label" for="appliedToCanada2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+
+                    <label class="mb-2" for="personalUCI">Identificador exclusivo do cliente (UCI) / visto canadense anterior, eTA ou número de permissão</label>
+                    <input type="text" class="form-control mb-3 w-50" id="personalUCI" name="personalUCI" value="{{data.personalUCI}}" disabled>
+                {{else}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="appliedToCanada" id="appliedToCanada1" value="0" checked required>
+                            <label class="form-check-label" for="appliedToCanada1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="appliedToCanada" id="appliedToCanada2"  value="1" disabled required>
+                            <label class="form-check-label" for="appliedToCanada2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+                {{/if}}
+
+                <a href="/aplicacao?etapa=3#maritalStatus" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+                
+                <hr>
+
+                <h3 class="h4">Informações de emprego</h3>
+
+                <label class="mb-2" for="occupation">Profissão</label>
+                <select class="form-select w-50 mb-3" name="occupation" id="occupation" disabled required>
+                    <option value="{{data.occupation}}">{{data.occupation}}</option>
+                </select>
+
+                <label class="mb-2" for="employmentTitle">Cargo</label>
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" disabled required>
+                    <option value="{{data.employmentTitle}}">{{data.employmentTitle}}</option>
+                </select>
+
+                <label class="mb-2" for="employmentCompanyName">Nome do empregador ou escola, conforme o caso.</label>
+                <input type="text" class="form-control mb-3 w-50" id="employmentCompanyName" name="employmentCompanyName" value="{{data.employmentCompanyName}}" disabled required>
+
+                <label class="mb-2" for="employmentCountry">País/território</label>
+                <select class="form-select w-50 mb-3" id="employmentCountry" name="employmentCountry" disabled required>
+                    <option value="{{data.employmentCountry}}">{{data.employmentCountry}}</option>
+                </select>
+
+                <label class="mb-2" for="employmentCity">Cidade/município</label>
+                <input type="text" class="form-control mb-3 w-50" id="employmentCity"  name="employmentCity" value="{{data.employmentCity}}" disabled required>
+
+                <label class="mb-2" for="employmentFromDateYear">Desde que ano?</label>
+                <select class="form-select w-50 mb-3" name="employmentFromDateYear" id="employmentFromDateYear" disabled required>
+                    <option value="{{data.employmentFromDateYear}}">{{data.employmentFromDateYear}}</option>
+                </select>
+
+                <a href="/aplicacao?etapa=3#occupation" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+
+                <hr>
+
+                <h3 class="h4">Informações de contato</h3>
+
+                <label class="mb-2" for="contactEmail">Endereço de e-mail</label>
+                <small>Este e-mail será utilizado para o envio de atualizações do processo de Autorização de Viagem, apenas.</small>
+                <input type="email" class="form-control mb-3 w-50" id="contactEmail" name="contactEmail" value="{{data.contactEmail}}" disabled required>
+
+                <label class="mb-2" for="contactTel">Celular</label>
+                <input type="tel" class="form-control mb-3 w-50" id="contactTel" name="contactTel" value="{{data.contactTel}}" disabled required>
+
+                <a href="/aplicacao?etapa=3#contactEmail" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+
+                <hr>
+
+                <h3 class="h4">Endereço residencial</h3>
+
+                <div class="row">
+                    <div class="col">
+                        <label for="addressName">Endereço</label>
+                        <input type="text" class="form-control mb-3" id="addressName" name="addressName" value="{{data.addressName}}" disabled required>
+                    </div>
+                    <div class="col">
+                        <label for="addressNumber">Número</label>
+                        <input type="text" class="form-control mb-3" id="addressNumber" name="addressNumber" value="{{data.addressNumber}}" disabled required>
+                    </div>
+                </div>
+
+                <label for="addressComplement">Complemento</label>
+                <input type="text" class="form-control mb-3 w-50" id="addressComplement" name="addressComplement" value="{{data.addressComplement}}" disabled>
+
+                <label for="addressCity">Cidade/município</label>
+                <input type="text" class="form-control mb-3 w-50" id="addressCity" name="addressCity" value="{{data.addressCity}}" disabled required>
+
+                <label class="mb-2" for="addressState">Estado/Região</label>
+                <input type="text" class="form-control w-50 mb-3" id="addressState" name="addressState"  value="{{data.addressState}}" disabled required>
+
+                <label for="addressCountry">País</label>
+                <select class="form-select mb-3 w-50" id="addressCountry" name="addressCountry" disabled required>
+                    <option value="{{data.addressCountry}}">{{data.addressCountry}}</option>
+                </select>
+
+                <a href="/aplicacao?etapa=3#addressName" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+        
+                <hr>
+
+                <h3 class="h4">Informação de viagem</h3>
+
+                <label>Você sabe quando vai viajar para o Canadá?</label>
+                {{#if data.travelWhen}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="travelWhen" id="travelWhen1" value="0" disabled required>
+                            <label class="form-check-label" for="travelWhen1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="travelWhen" id="travelWhen2" value="1" checked required>
+                            <label class="form-check-label" for="travelWhen2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+
+                    <label class="mb-2" for="travelDate">Quando você pretende viajar para o Canadá?</label>
+                    <input type="date" class="form-control mb-3 w-25" name="travelDate" id="travelDate" value="{{data.travelDate}}" disabled required>
+
+                    <label class="mb-2">Insira o horário de partida do seu voo para o Canadá</label>
+                    <div class="row">
+                        <div class="col">
+                            <input type="time" class="form-control mb-3" name="travelTime" id="travelTime" value="{{data.travelTime}}" disabled required>
+                        </div>
+                        <div class="col">
+                            <select class="form-select mb-3" name="travelTimeZone" id="travelTimeZone" disabled required>
+                                <option value="{{data.travelTimeZone}}">{{data.travelTimeZone}}</option>
+                            </select>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                {{else}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="travelWhen" id="travelWhen1" value="0" checked required>
+                            <label class="form-check-label" for="travelWhen1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="travelWhen" id="travelWhen2" value="1" disabled required>
+                            <label class="form-check-label" for="travelWhen2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+                {{/if}}
+
+                <a href="/aplicacao?etapa=3#travelWhen1" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+
+                <hr>
+
+                <h3 class="h4">Perguntas básicas</h3>
+
+                <label>Você já teve um visto ou permissão negado, entrada negada ou ordem de deixar o Canadá ou qualquer outro país/território?</label>
+                {{#if data.refusedVisaToCanda}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="refusedVisaToCanda" id="refusedVisaToCanda1" value="0" disabled required>
+                            <label class="form-check-label" for="refusedVisaToCanda1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="refusedVisaToCanda" id="refusedVisaToCanda2" value="1" checked required>
+                            <label class="form-check-label" for="refusedVisaToCanda2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+
+                    <label for="refusedVisaToCandaDetails">Para cada recusa, por favor, indique o país que lhe recusou o visto ou autorização, ou que lhe negou a entrada, bem como os motivos apresentados pelo país.</label>
+                    <textarea rows="5" class="form-control mb-3 w-50"  id="refusedVisaToCandaDetails" name="refusedVisaToCandaDetails" maxlength="500" disabled required>{{data.refusedVisaToCandaDetails}}</textarea>
+                {{else}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="refusedVisaToCanda" id="refusedVisaToCanda1" value="0" checked required>
+                            <label class="form-check-label" for="refusedVisaToCanda1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="refusedVisaToCanda" id="refusedVisaToCanda2" value="1" disabled required>
+                            <label class="form-check-label" for="refusedVisaToCanda2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+                {{/if}}
+                
+
+                <label>Você já cometeu, foi preso, acusado ou condenado por algum crime em qualquer país/território?</label>
+                {{#if data.criminalOffenceAnywhere}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="criminalOffenceAnywhere" id="criminalOffenceAnywhere1" value="0" disabled required>
+                            <label class="form-check-label" for="criminalOffenceAnywhere1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="criminalOffenceAnywhere" id="criminalOffenceAnywhere2" value="1" checked required>
+                            <label class="form-check-label" for="criminalOffenceAnywhere2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+
+                    <label for="criminalOffenceAnywhereDetails">Para cada prisão, acusação ou condenação, indique onde (cidade, país), quando (mês/ano), a natureza do delito e a sentença.</label>
+                    <textarea rows="5" class="form-control mb-3 w-50" id="criminalOffenceAnywhereDetails" name="criminalOffenceAnywhereDetails" maxlength="500" disabled required>{{data.criminalOffenceAnywhereDetails}}</textarea>
+                {{else}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="criminalOffenceAnywhere" id="criminalOffenceAnywhere1" value="0" checked required>
+                            <label class="form-check-label" for="criminalOffenceAnywhere1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="criminalOffenceAnywhere" id="criminalOffenceAnywhere2" value="1" disabled required>
+                            <label class="form-check-label" for="criminalOffenceAnywhere2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+                {{/if}}
+
+                <label>Nos últimos dois anos, você foi diagnosticado com tuberculose ou esteve em contato próximo com uma pessoa com tuberculose?</label>
+                {{#if data.tuberculosis}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tuberculosis" id="tuberculosis1" value="0" disabled required>
+                            <label class="form-check-label" for="tuberculosis1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tuberculosis" id="tuberculosis2" value="1" checked required>
+                            <label class="form-check-label" for="tuberculosis2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+                    <label for="tuberculosisResultCareWorker">O seu contato com a tuberculose é resultado de ser um profissional de saúde?</label>
+                    {{#if data.tuberculosisResultCareWorker}}
+                        <div class="p-2 w-50 d-flex flex-row gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tuberculosisResultCareWorker" id="tuberculosisResultCareWorker1" value="0" disabled required>
+                                <label class="form-check-label" for="tuberculosisResultCareWorker1">
+                                    Não
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tuberculosisResultCareWorker" id="tuberculosisResultCareWorker2" value="1" checked required>
+                                <label class="form-check-label" for="tuberculosisResultCareWorker2">
+                                    Sim
+                                </label>
+                            </div>
+                        </div>
+                        <label for="diagnosedWithTuberculosis">Você já foi diagnosticado com tuberculose?</label>
+                        {{#if diagnosedWithTuberculosis}}
+                            <div class="p-2 w-50 d-flex flex-row gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="diagnosedWithTuberculosis" id="diagnosedWithTuberculosis1" value="0" disabled required>
+                                    <label class="form-check-label" for="diagnosedWithTuberculosis1">
+                                        Não
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="diagnosedWithTuberculosis" id="diagnosedWithTuberculosis2" value="1" checked required>
+                                    <label class="form-check-label" for="diagnosedWithTuberculosis2">
+                                        Sim
+                                    </label>
+                                </div>
+                            </div>
+                        {{else}}
+                            <div class="p-2 w-50 d-flex flex-row gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="diagnosedWithTuberculosis" id="diagnosedWithTuberculosis1" value="0" checked required>
+                                    <label class="form-check-label" for="diagnosedWithTuberculosis1">
+                                        Não
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="diagnosedWithTuberculosis" id="diagnosedWithTuberculosis2" value="1" disabled required>
+                                    <label class="form-check-label" for="diagnosedWithTuberculosis2">
+                                        Sim
+                                    </label>
+                                </div>
+                            </div>
+                        {{/if}}
+                    {{else}}
+                        <div class="p-2 w-50 d-flex flex-row gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tuberculosisResultCareWorker" id="tuberculosisResultCareWorker1" value="0" checked required>
+                                <label class="form-check-label" for="tuberculosisResultCareWorker1">
+                                    Não
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tuberculosisResultCareWorker" id="tuberculosisResultCareWorker2" value="1" disabled required>
+                                <label class="form-check-label" for="tuberculosisResultCareWorker2">
+                                    Sim
+                                </label>
+                            </div>
+                        </div>
+                    {{/if}}
+                {{else}}
+                    <div class="p-2 w-50 d-flex flex-row gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tuberculosis" id="tuberculosis1" value="0" checked required>
+                            <label class="form-check-label" for="tuberculosis1">
+                                Não
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tuberculosis" id="tuberculosis2" value="1" disabled required>
+                            <label class="form-check-label" for="tuberculosis2">
+                                Sim
+                            </label>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                <label class="mb-2" for="theseConditions">Você tem uma dessas condições?</label>
+                <select class="form-select mb-3 w-50" id="theseConditions" name="theseConditions" disabled required>
+                    <option value="{{data.theseConditions}}">{{data.theseConditions}}</option>
+                </select>
+
+                <label for="canadaDuringStayDetails">Indique brevemente se há detalhes adicionais pertinentes à sua inscrição.</label>
+                <p>Por exemplo, uma necessidade urgente de viajar para o Canadá. Forneça detalhes relevantes para evitar atrasos no processamento de sua inscrição.</p>
+                <textarea rows="5" class="form-control mb-3 w-50" id="canadaDuringStayDetails" name="canadaDuringStayDetails" maxlength="250" disabled>{{data.canadaDuringStayDetails}}</textarea>
+
+                <a href="/aplicacao?etapa=3#refusedVisaToCanda1" class="btn btn-primary fw-bold text-uppercase">Editar</a>
+
+                <h3 class="mt-4">Consentimento e declaração</h3>
+
+                <p>As informações fornecidas ao IRCC são coletadas sob a autoridade da Lei de Proteção à Imigração e Refugiados (IRPA) para determinar a admissibilidade no Canadá. As informações fornecidas podem ser compartilhadas com outras instituições do governo canadense, como, entre outras, a Agência de Serviços de Fronteiras do Canadá (CBSA), a Polícia Montada Real do Canadá (RCMP), o Serviço de Inteligência de Segurança do Canadá (CSIS), o Departamento de Relações Exteriores , Comércio e Desenvolvimento (DFATD), Emprego e Desenvolvimento Social do Canadá (ESDC), Agência de Receita do Canadá (CRA), governos provinciais e territoriais e governos estrangeiros de acordo com a subseção 8(2) da Lei de Privacidade. As informações podem ser divulgadas ou validadas com governos estrangeiros, órgãos de aplicação da lei e autoridades de detenção no que diz respeito à administração e aplicação da legislação de imigração, onde tal compartilhamento de informações não pode colocar o indivíduo e/ou sua família em risco. As informações também podem ser sistematicamente validadas por outras instituições do governo canadense para fins de validação de status e identidade para administrar seus programas.</p>
+                <p>Quando a biometria for fornecida como parte de um aplicativo, as impressões digitais coletadas serão armazenadas e compartilhadas com o RCMP. O registro da impressão digital também pode ser divulgado às agências de aplicação da lei no Canadá, de acordo com a subseção 13.11(1) dos Regulamentos de Imigração e Proteção aos Refugiados. As informações podem ser usadas para estabelecer ou verificar a identidade de uma pessoa a fim de prevenir, investigar ou processar um delito sob qualquer lei do Canadá ou de uma província. Essas informações também podem ser usadas para estabelecer ou verificar a identidade de um indivíduo cuja identidade não pode ser razoavelmente estabelecida ou verificada por causa de sua condição física ou mental. O Canadá também pode compartilhar informações de imigração relacionadas a registros biométricos com governos estrangeiros com os quais o Canadá tenha um acordo ou acordo.</p>
+                <p>Dependendo do tipo de solicitação feita, as informações fornecidas serão armazenadas em um ou mais bancos de informações pessoais (PIB) de acordo com a seção 10(1) da Lei de Privacidade do Canadá. Os indivíduos também têm direito à proteção e acesso às suas informações pessoais armazenadas em cada PIB correspondente de acordo com a Lei de Acesso à Informação. Mais detalhes sobre os PIBs pertencentes à linha de negócios e serviços do IRCC e o acesso do Governo do Canadá a programas de informação e privacidade estão disponíveis no <a href="https://www.tbs-sct.gc.ca/hgw-cgf/oversight-surveillance/atip-aiprp/ai/iapih-rpfr-eng.asp" target="_blank">site da Infosource</a> e por meio do Call Center do IRCC. Info Source também está disponível em bibliotecas públicas em todo o Canadá.</p>
+                <h4>Declaração do Requerente</h4>
+                <p>Li e compreendi a declaração acima.</p>
+                <p>Declaro que as informações por mim prestadas neste requerimento são verdadeiras, completas e corretas.</p>
+                <p>Entendo que a declaração falsa é uma ofensa sob a seção 127 da <em>Lei de Proteção à Imigração e Refugiados</em> e pode resultar em inadmissibilidade para o Canadá ou remoção do Canadá.</p>
+                <p>Concordo que, ao digitar meu nome e clicar em assinar, assino eletronicamente minha inscrição.</p>
+                
+                <h4 class="mt-4">Concordo <span class="text-red">* (obrigatório)</span></h4>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" value="OK" name="agreeCheck" id="flexCheckDefault" required>
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Concordo
+                    </label>
+                </div>
+
+                <label for="consentAndDeclaration">Assinatura do requerente <span class="text-red">* (obrigatório)</span></label>
+                <p>Para assinar, digite seu nome como aparece no seu passaporte.</p> 
+                <input type="text" class="form-control mb-3 w-50" id="consentAndDeclaration"  name="consentAndDeclaration" required>
+
+                <input class="btn btn-success mt-5" id="envForm" type="submit" value="Ir para pagamento">
+            </form>
+        </div>
+    </section>
+    {{!-- MODAIS--}}
+    {{!-- <section></section> --}}
+</main>

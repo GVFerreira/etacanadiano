@@ -1,0 +1,42 @@
+<script src="https://js.stripe.com/v3/"></script>
+<main>
+    <section class="container d-flex justify-content-center align-items-center" style="margin: 7rem auto">
+        <p id="message" class="alert-alert-danger p-1"></p>
+    </section>
+</main>
+<style>
+    header #nav {
+        display: none !important;
+    }
+</style>
+<script defer>
+
+    const message = document.getElementById('message')
+    // Initialize Stripe.js using your publishable key
+    const stripe = Stripe('{{publishable_key}}')
+
+    // Retrieve the "payment_intent_client_secret" query parameter appended to
+    // your return_url by Stripe.js
+    const clientSecret = new URLSearchParams(window.location.search).get('payment_intent_client_secret')
+
+    // Retrieve the PaymentIntent
+    stripe.retrievePaymentIntent(clientSecret).then(({paymentIntent}) => {
+        switch (paymentIntent.status) {
+            case 'succeeded':
+                window.location.href = `/checkout/obrigado?status=${paymentIntent.status}&transaction_id=${paymentIntent.id}`
+                break
+
+            case 'processing':
+                window.location.href = `/checkout/em_processo?status=${paymentIntent.status}&transaction_id=${paymentIntent.id}`
+                break
+
+            case 'requires_payment_method':
+                window.location.href = `/checkout/recusado?status=${paymentIntent.status}&transaction_id=${paymentIntent.id}`
+                break
+
+            default:
+                message.innerText = 'Algo deu errado.'
+                break
+        }
+    })
+</script>
