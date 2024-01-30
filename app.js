@@ -559,7 +559,7 @@ app.post('/contact-form', (req, res) => {
 
     const mailOptions = {
         from: `eTA Canadiano <${process.env.USER_MAIL}>`,
-        to: 'contacto@etacanadiano.pt',
+        to: process.env.MAIL_RECEIPT,
         subject: 'Formulário de Contacto',
         template: 'contacto',
         context: {
@@ -569,14 +569,16 @@ app.post('/contact-form', (req, res) => {
         }
     }
 
-    transporter.sendMail(mailOptions, (err, info) => {
+    transporter.sendMail(mailOptions, (err, {response, envelope, messageId}) => {
         if(err) {
+            console.error("Formulário de contacto: " + new Date())
             console.error(err)
             req.flash('error_msg', `Houve um erro ao enviar este formulário: ${err}`)
             res.redirect('/contacto')
         } else {
-            console.log(info)
-            req.flash('success_msg', `Formulário enviado com sucesso. Em breve nossa equipe entrará em contacto.`)
+            console.log("Formulário de contacto: " + new Date())
+            console.log({response, envelope, messageId})
+            req.flash('success_msg', `Formulário enviado com sucesso. Em breve a nossa equipe entrará em contacto.`)
             res.redirect('/contacto')
         }
     })
