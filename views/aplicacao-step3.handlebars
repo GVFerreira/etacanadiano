@@ -123,7 +123,7 @@
                     <option value="Butão">Butão</option>
                     <option value="Bolívia">Bolívia</option>
                     <option value="Bósnia e Herzegovina">Bósnia e Herzegovina</option>
-                    <option value="Brasil" selected>Brasil</option>
+                    <option value="Brasil">Brasil</option>
                     <option value="Ilhas Virgens Britânicas">Ilhas Virgens Britânicas</option>
                     <option value="Brunei">Brunei</option>
                     <option value="Bulgária">Bulgária</option>
@@ -267,7 +267,7 @@
                     <option value="Peru">Peru</option>
                     <option value="Filipinas">Filipinas</option>
                     <option value="Polônia">Polônia</option>
-                    <option value="Portugal">Portugal</option>
+                    <option value="Portugal" selected>Portugal</option>
                     <option value="Porto Rico">Porto Rico</option>
                     <option value="Catar">Catar</option>
                     <option value="República do Congo">República do Congo</option>
@@ -674,7 +674,7 @@
                     <option value="Butão">Butão</option>
                     <option value="Bolívia">Bolívia</option>
                     <option value="Bósnia e Herzegovina">Bósnia e Herzegovina</option>
-                    <option value="Brasil" selected>Brasil</option>
+                    <option value="Brasil">Brasil</option>
                     <option value="Ilhas Virgens Britânicas">Ilhas Virgens Britânicas</option>
                     <option value="Brunei">Brunei</option>
                     <option value="Bulgária">Bulgária</option>
@@ -818,7 +818,7 @@
                     <option value="Peru">Peru</option>
                     <option value="Filipinas">Filipinas</option>
                     <option value="Polônia">Polônia</option>
-                    <option value="Portugal">Portugal</option>
+                    <option value="Portugal" selected>Portugal</option>
                     <option value="Porto Rico">Porto Rico</option>
                     <option value="Catar">Catar</option>
                     <option value="República do Congo">República do Congo</option>
@@ -1074,7 +1074,7 @@
                 <option value="Butão">Butão</option>
                 <option value="Bolívia">Bolívia</option>
                 <option value="Bósnia e Herzegovina">Bósnia e Herzegovina</option>
-                <option value="Brasil" selected>Brasil</option>
+                <option value="Brasil">Brasil</option>
                 <option value="Ilhas Virgens Britânicas">Ilhas Virgens Britânicas</option>
                 <option value="Brunei">Brunei</option>
                 <option value="Bulgária">Bulgária</option>
@@ -1218,7 +1218,7 @@
                 <option value="Peru">Peru</option>
                 <option value="Filipinas">Filipinas</option>
                 <option value="Polônia">Polônia</option>
-                <option value="Portugal">Portugal</option>
+                <option value="Portugal" selected>Portugal</option>
                 <option value="Porto Rico">Porto Rico</option>
                 <option value="Catar">Catar</option>
                 <option value="República do Congo">República do Congo</option>
@@ -1799,7 +1799,7 @@
                             <option value="Horário do Butão">Horário do Butão</option>
                             <option value="Horário da Bolívia">Horário da Bolívia</option>
                             <option value="Horário de Bougainville">Horário de Bougainville</option>
-                            <option value="Horário de Brasília" selected>Horário de Brasília</option>
+                            <option value="Horário de Brasília">Horário de Brasília</option>
                             <option value="Horário britânico">Horário britânico</option>
                             <option value="Horário de Brunei">Horário de Brunei</option>
                             <option value="Horário de Cabo Verde">Horário de Cabo Verde</option>
@@ -1922,7 +1922,7 @@
                             <option value="Horário da Indonésia Ocidental">Horário da Indonésia Ocidental</option>
                             <option value="Horário de Samoa Ocidental">Horário de Samoa Ocidental</option>
                             <option value="Horário da África Ocidental">Horário da África Ocidental</option>
-                            <option value="Horário da Europa Ocidental">Horário da Europa Ocidental</option>
+                            <option value="Horário da Europa Ocidental" selected>Horário da Europa Ocidental</option>
                             <option value="Horário da Groenlândia Ocidental">Horário da Groenlândia Ocidental</option>
                             <option value="Horário de Xinjiang">Horário de Xinjiang</option>
                             <option value="Horário de Yakutsk">Horário de Yakutsk</option>
@@ -2087,40 +2087,40 @@
     
     window.onload = () => {
         const gender = document.getElementById("gender")
-        if(gender)
+        if(gender && "{{data.gender}}")
             if(gender !== "") gender.value = "{{data.gender}}"
 
         const countryBirth = document.getElementById("countryBirth")
-        if(countryBirth)
+        if(countryBirth && "{{data.countryBirth}}")
             if(countryBirth !== "") countryBirth.value = "{{data.countryBirth}}"
 
         const maritalStatus = document.getElementById("maritalStatus")
-        if(maritalStatus) 
+        if(maritalStatus && "{{data.maritalStatus}}") 
             if(maritalStatus !== "") maritalStatus.value = "{{data.maritalStatus}}"
 
         const occupation = document.getElementById("occupation")
-        if(occupation)
+        if(occupation  && "{{data.occupation}}")
             if(occupation) occupation.value = "{{data.occupation}}"
 
         const employmentTitle = document.getElementById("employmentTitle")
-        if(employmentTitle)
+        if(employmentTitle  && "{{data.employmentTitle}}")
             if(employmentTitle) employmentTitle.value = "{{data.employmentTitle}}"
 
         const employmentCountry = document.getElementById("employmentCountry")
-        if(employmentCountry)
+        if(employmentCountry && "{{data.employmentCountry}}")
             if(employmentCountry) employmentCountry.value = "{{data.employmentCountry}}"
 
         const employmentFromDateYear = document.getElementById("employmentFromDateYear")
-        if(employmentFromDateYear)
+        if(employmentFromDateYear && "{{data.employmentFromDateYear}}")
             if(employmentFromDateYear) employmentFromDateYear.value = "{{data.employmentFromDateYear}}"
 
         const addressCountry = document.getElementById("addressCountry")
-        if(addressCountry)
+        if(addressCountry && "{{data.addressCountry}}")
             if(addressCountry) addressCountry.value = "{{data.addressCountry}}"
 
         const travelTimeZone = document.getElementById("travelTimeZone")
-        if(travelTimeZone)
-            if(travelTimeZone) travelTimeZone.value = "{{data.travelTimeZone}}"
+        if(travelTimeZone  && "{{data.travelTimeZone}}")
+            if(travelTimeZone) travelTimeZone.value = "{{data.travelTimeZone}}" 
     }
 </script>
 
