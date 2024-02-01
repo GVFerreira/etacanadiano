@@ -25,6 +25,9 @@ const axios = require('axios')
 
 require('dotenv').config()
 
+/////////////////
+// SOLICITAÇÃO //
+/////////////////
 router.get('/', async (req, res) => {
     const page = req.query.page || 1
     const sort = req.query.sort || "DESC"
@@ -376,6 +379,9 @@ router.get('/delete-visa/:id', (req, res) => {
     })
 })
 
+///////////////
+// PAGAMENTO //
+///////////////
 router.get('/consult-payments', async (req, res) => {
     try {
         const pagamentos = await Payment.find().populate('visaIDs').sort({ createdAt: -1 })
@@ -445,6 +451,9 @@ router.post('/create-payments/:id', async (req, res) => {
     }
 })
 
+/////////////
+// USUÁRIO //
+/////////////
 router.get("/register-user", (req, res) => {
     res.render("admin/register-user")
 })
