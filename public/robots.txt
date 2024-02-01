@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://etacanadiano.com.br/sitemap.xml
+Sitemap: https://etacanadiano.pt/sitemap.xml
