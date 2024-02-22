@@ -45,10 +45,9 @@ router.get('/', async (req, res) => {
 
       if(!req.session.client_secret) {
         const paymentIntent = await stripe.paymentIntents.create({
-          //amount: qtyVisas * 4900,
-          amount: qtyVisas * 100,
+          amount: qtyVisas * 4900,
           description: 'Solicitação de Autorização de Viagem - Canadiano',
-          currency: 'BRL',
+          currency: 'EUR',
           receipt_email: aplicacoes[0].contactEmail,
           metadata: { internalPayment: "" },
           automatic_payment_methods: { enabled: true }
@@ -92,7 +91,7 @@ router.get('/', async (req, res) => {
         })
       } else {
         await stripe.paymentIntents.update(req.session.payment_id,
-          { amount: qtyVisas * 100 }
+          { amount: qtyVisas * 4900 }
         )
 
         for (const idVisa of visas) {
@@ -103,7 +102,7 @@ router.get('/', async (req, res) => {
           }
         }
 
-        await Payment.updateOne({ client_secret: req.session.client_secret }, { $set: { visaIDs: visas, transaction_amount: qtyVisas * 1} })
+        await Payment.updateOne({ client_secret: req.session.client_secret }, { $set: { visaIDs: visas, transaction_amount: qtyVisas * 49} })
 
         res.render('checkout/index', {
           title,
