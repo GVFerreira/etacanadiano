@@ -590,7 +590,7 @@
                 <h3 class="mt-4">Informação de emprego</h3>
 
                 <label class="mb-2" for="occupation">Profissão <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select w-50 mb-3" name="occupation" id="occupation" onchange="showDataOccupation(this.value)">
+                <select class="form-select w-50 mb-3" name="occupation" id="occupation" onchange="showDataOccupation(this.value)" required>
                     <option selected disabled>Selecione</option>
                     <option value="Ocupações artísticas, culturais, recreativas e desportivas">Ocupações artísticas, culturais, recreativas e desportivas</option>
                     <option value="Ocupações de negócios, finanças e administração">Ocupações de negócios, finanças e administração</option>
@@ -640,7 +640,7 @@
                 <input type="text" class="form-control mb-3 w-50" id="addressComplement" name="addressComplement" value="{{data.addressComplement}}">
 
                 <label for="addressCity">Cidade/município <span class="text-red">* (obrigatório)</span></label>
-                <input type="text" class="form-control mb-3 w-50" id="addressCity" name="addressCity" value="{{data.addressCity}}">
+                <input type="text" class="form-control mb-3 w-50" id="addressCity" name="addressCity" value="{{data.addressCity}}" required>
 
                 <label class="mb-2" for="addressState">Estado/Região <span class="text-red">* (obrigatório)</span></label>
                 <input type="text" class="form-control w-50 mb-3" id="addressState" name="addressState"  value="{{data.addressState}}" required>
@@ -1028,7 +1028,7 @@
 
         if(value === '1') {
             dynamicUCI.innerHTML += `
-                <label for="personalUCI">Identificador exclusivo do cliente (UCI) / visto canadense anterior, eTA ou número de permissão</label>
+                <label for="personalUCI">Identificador exclusivo do cliente (UCI) / visto canadiano anterior, eTA ou número de permissão</label>
                 <input type="text" class="form-control mb-3 w-50" id="personalUCI" name="personalUCI" value="{{data.personalUCI}}">
             `
         } else {

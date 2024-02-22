@@ -1,12 +1,14 @@
 <link rel="stylesheet" href="/css/checkout.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+
 <main>
     <div class="container container__payment">
         <div class="py-5 text-center">
-            <img class="d-block mx-auto mb-4" src="/img/mercadopago-logo.webp" alt="" width="auto" height="57">
+            <img class="d-block mx-auto mb-4" src="/img/stripe.webp" alt="" width="auto" height="57">
             <h1>Checkout</h1>
             <p class="lead">
-                Está página está protegida por todas as etapas de segurança do Stripe
+                Esta página está protegida por todas as etapas de segurança do Stripe.
             </p>
         </div>
 
@@ -16,13 +18,15 @@
                     <span class="text-primary">Sua compra</span>
                 </h4>
                 <ul class="list-group mb-3">
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Solicitação de Autorização de Viagem</h6>
-                            <small class="text-muted">Permissão para viajar ao Canadá</small>
-                        </div>
-                        <span class="text-muted" id="totalAmount1">R$ 147,00</span>
-                    </li>
+                    {{#each aplicacoes}}
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">Solicitação de Autorização de Viagem</h6>
+                                <small class="text-muted">{{codeETA}} - {{firstName}} {{surname}}</small>
+                            </div>
+                            <span class="text-muted totalAmount1"></span>
+                        </li>
+                    {{/each}}
                     {{!-- ELEMENTO PARA EXIBIÇÃO DO DESCONTO DE CÓDIGO PROMOCIONAL --}}
                     {{!-- <li class="list-group-item d-flex justify-content-between bg-light">
                         <div class="text-success">
@@ -32,8 +36,8 @@
                         <span class="text-success">−$5</span>
                     </li> --}}
                     <li class="list-group-item d-flex justify-content-between">
-                        <span>Total (R$)</span>
-                        <strong id="totalAmount2">147,00</strong>
+                        <span>Total (€)</span>
+                        <strong id="totalAmount2"></strong>
                     </li>
                 </ul>
 
@@ -49,33 +53,19 @@
             <div class="col-md-6 col-lg-7">
                 <h4 class="mb-3">Métodos de pagamento</h4>
 
-                <div class="accordion w-md-75 m-auto" id="accordionExample">
-                    <!-- PAGAMENTO COM CARTÃO DE CRÉDITO -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="fs-3 accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                
-                            </div>
-                        </div>
+                <!-- PAGAMENTO COM CARTÃO DE CRÉDITO -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h4 fs-3">Pagamento com Stripe</h3>
                     </div>
+                    <div class="card-body">
+                        <form id="payment-form" data-secret="{{client_secret}}">
+                            <div id="payment-element"></div>
 
-                    <!-- PAGAMENTO COM PIX -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="fs-3 accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">                      
-                                
-                            </div>
-                        </div>
+                            <button id="submit" class="btn btn-success fw-bold text-uppercase mt-3">Pagar</button>
+                        </form>
+                        
+                        <div id="error-message" class="mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -97,7 +87,7 @@
 
                     <p>Além disso, 99% dos nossos clientes têm seu eTA aprovado em poucas horas.</p>
 
-                    <p>O valor de apenas R$ 147,00 já inclui a taxa do governo canadiano e o valor da nossa prestação de serviços para assessoria individual na aplicação do seu eTA.</p>
+                    <p>O valor de apenas €49,00 já inclui a taxa do governo canadiano e o valor da nossa prestação de serviços para assessoria individual na aplicação do seu eTA.</p>
 
                     <p>Para confirmar o seu interesse no eTA, clique no botão abaixo para retornar ao checkout.</p>
                 </div>
@@ -109,49 +99,52 @@
     </div>
 </main>
 
-{{!-- Script para Cartão de Crédito --}}
+{{!-- STRIPE PAYMENT --}}
 <script defer>
-    fetch("/checkout/process-payment", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            token,
-            issuerId,
-            paymentMethodId,
-            transactionAmount: Number(amount),
-            installments: Number(installments),
-            description: "Solicitação de Autorização de Viagem - Canadá",
-            payer: {
-                email,
-                identification: {
-                    type: identificationType,
-                    number: identificationNumber
-                }
+    const stripe = Stripe("{{publishable_key}}")
+
+    const options = {
+        clientSecret: "{{client_secret}}",
+        appearance: {
+            theme:'flat',
+            variables: {
+                colorPrimaryText: '#17233D'
+            } 
+        }
+    }
+
+    // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in a previous step
+    const elements = stripe.elements(options)
+
+    // Create and mount the Payment Element
+    const paymentElement = elements.create('payment')
+    paymentElement.mount('#payment-element')
+
+    const form = document.getElementById('payment-form')
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault()
+
+        const {error} = await stripe.confirmPayment({
+            //`Elements` instance that was used to create the Payment Element
+            elements,
+            confirmParams: {
+                return_url: 'http://localhost:3040/checkout/status'
             }
         })
-    })  
-        .then((response) => { return response.json()})
-        .then((response) => {
-            switch(response.status) {
-                case 'approved':
-                    window.location.href = `/checkout/obrigado?status_detail=${response.detail}&status=${response.status}&transaction_id=${response.id}`
-                    break
-                
-                case 'rejected':
-                    window.location.href = `/checkout/recusado?status_detail=${response.detail}&status=${response.status}&transaction_id=${response.id}`
-                    break
-                
-                default:
-                    window.location.href = `/checkout/em_processo?status_detail=${response.detail}&status=${response.status}&transaction_id=${response.id}`
-            }
-        })
-        .catch(e => {
-            console.error(e)
-            alert(e)
-        })
-                
+
+        if (error) {
+            // This point will only be reached if there is an immediate error when
+            // confirming the payment. Show error to your customer (for example, payment
+            // details incomplete)
+            console.log(error.message)
+            const messageContainer = document.getElementById('error-message')
+            messageContainer.innerHTML = `<p class="d-inline-block alert alert-danger p-1">${error.message}</p>`
+        } else {
+            // Your customer will be redirected to your `return_url`. For some payment
+            // methods like iDEAL, your customer will be redirected to an intermediate
+            // site first to authorize the payment, then redirected to the `return_url`.
+        }
+    })
 </script>
 
 {{!-- Scripts secundário --}}
@@ -171,26 +164,10 @@
         }
     })
 
-
     //Atualizar valor em tela
-    const qtyVisas = "{{qtyVisas}}"
-    const total = parseInt(qtyVisas) * 147
-    $('#totalAmount2').text(`${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
     $(document).ready(function() {
-        $('#collapseTwo').on('show.bs.collapse', function() {
-            $('.totalAmount1').text('R$ 139,65')
-            const qtyVisas = "{{qtyVisas}}"
-            const total = parseInt(qtyVisas) * 139.65
-            $('#totalAmount2').text(`${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
-
-        })
-
-        $('#collapseTwo').on('hide.bs.collapse', function() {
-            $('.totalAmount1').text('R$ 147,00')
-            const qtyVisas = "{{qtyVisas}}"
-            const total = parseInt(qtyVisas) * 147
-            $('#totalAmount2').text(`${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
-
-        })
+        $('.totalAmount1').text('€49,00')
+        const total = parseInt("{{qtyVisas}}") * 49
+        $('#totalAmount2').text(`${total.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
     })
 </script>

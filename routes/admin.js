@@ -336,7 +336,7 @@ router.post('/edit-visa/:id', uploadAttach.array('attachments'), (req, res) => {
 
         const subject = `${visa.firstName} ${visa.surname} - ${visa.numPassport}`.toUpperCase()
         const mailOptions = {
-            from: `eTA Canadense <${process.env.USER_MAIL}>`,
+            from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
             to: visa.contactEmail,
             replyTo: process.env.USER_MAIL,
             subject,

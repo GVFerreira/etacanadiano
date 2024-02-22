@@ -30,98 +30,114 @@ const publishable_key = process.env.STRIPE_PUBLISHABLE_KEY
 
 
 router.get('/', async (req, res) => {
-  const sessionaData = req.session.aplicacaoStep
-  if('visaID' in sessionaData) {
-    const title = 'Checkout - '
-    const aplicacoes = req.session.aplicacoes
-    //const aplicacoes = [{codeETA: '7QIZA', firstName: 'Gustavo', surname: 'Ferreira'}, {codeETA: '7QIZB', firstName: 'Bruna', surname: 'Santos'}]
-    const qtyVisas = aplicacoes.length
+  try {
+    const sessionaData = req.session.aplicacaoStep
+    if('visaID' in sessionaData) {
+      const title = 'Checkout - '
 
-    const visas = req.session.visas.ids
-    //const visas = ['65a9be7d3de620fddc6581eb']
+      const aplicacoes = req.session.aplicacoes
+      //const aplicacoes = [{codeETA: '7QIZA', firstName: 'Gustavo', surname: 'Ferreira'}, {codeETA: '7QIZB', firstName: 'Bruna', surname: 'Santos'}]
+      
+      const visas = req.session.visas.ids
+      //const visas = ['65a9be7d3de620fddc6581eb']
 
-    if(!req.session.client_secret) {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: qtyVisas * 4900,
-        description: 'Solicitação de Autorização de Viagem - Canadiano',
-        currency: 'EUR',
-        receipt_email: aplicacoes[0].contactEmail,
-        automatic_payment_methods: { enabled: true }
-      })
-  
-      req.session.payment_id = paymentIntent.id
-      req.session.client_secret = paymentIntent.client_secret
+      const qtyVisas = aplicacoes.length
 
-      const payment = await Payment.create({
-        transaction_amount: paymentIntent.amount / 100,
-        transactionId: paymentIntent.id,
-        client_secret: paymentIntent.client_secret,
-        status: 'Checkout em andamento',
-        visaIDs: visas,
-        updatedAt: null,
-        createdAt: new Date(paymentIntent.created * 1000).toISOString()
-      })
-      await payment.save()
+      if(!req.session.client_secret) {
+        const paymentIntent = await stripe.paymentIntents.create({
+          //amount: qtyVisas * 4900,
+          amount: qtyVisas * 100,
+          description: 'Solicitação de Autorização de Viagem - Canadiano',
+          currency: 'EUR',
+          receipt_email: aplicacoes[0].contactEmail,
+          metadata: { internalPayment: "" },
+          automatic_payment_methods: { enabled: true }
+        })
+    
+        req.session.payment_id = paymentIntent.id
+        req.session.client_secret = paymentIntent.client_secret
 
-      for (const idVisa of visas) {
-        const visa = await Visa.findOne({_id: idVisa})
-        if (visa) {
-          await Visa.updateOne({ _id: visa._id }, { $set: { pagamento: payment._id } })
-        }
-      }
+        const payment = await Payment.create({
+          transaction_amount: paymentIntent.amount / 100,
+          transactionId: paymentIntent.id,
+          client_secret: paymentIntent.client_secret,
+          status: 'Checkout em andamento',
+          visaIDs: visas,
+          updatedAt: null,
+          createdAt: new Date(paymentIntent.created * 1000).toISOString()
+        })
+        await payment.save()
 
-      await stripe.paymentIntents.update(
-        req.session.payment_id,
-        {
-          metadata: {
-            internalPayment: payment._id
+        for (const idVisa of visas) {
+          const visa = await Visa.findOne({_id: idVisa})
+          if (visa) {
+            await Visa.updateOne({ _id: visa._id }, { $set: { pagamento: payment._id } })
           }
         }
-      )
-  
-      res.render('checkout/index', {
-        title,
-        publishable_key,
-        client_secret: paymentIntent.client_secret,
-        qtyVisas,
-        aplicacoes
-      })
-    } else {
-      await stripe.paymentIntents.update(
-        req.session.payment_id,
-        {
-          amount: qtyVisas * 4900
-        }
-      )
 
-      for (const idVisa of visas) {
-        const visa = await Visa.findOne({_id: idVisa})
-        if (visa) {
-          const payment = await Payment.findOne({transactionId: req.session.payment_id})
-          await Visa.updateOne({ _id: visa._id }, { $set: { pagamento: payment._id } })
+        const savedPaymentID = payment._id.toString()
+        await stripe.paymentIntents.update( req.session.payment_id,
+          { metadata: {
+              internalPayment: savedPaymentID
+            }
+          }
+        )
+    
+        res.render('checkout/index', {
+          title,
+          publishable_key,
+          client_secret: paymentIntent.client_secret,
+          qtyVisas,
+          aplicacoes
+        })
+      } else {
+        await stripe.paymentIntents.update(req.session.payment_id,
+          { amount: qtyVisas * 100 }
+        )
+
+        for (const idVisa of visas) {
+          const visa = await Visa.findOne({_id: idVisa})
+          if (visa) {
+            const payment = await Payment.findOne({transactionId: req.session.payment_id})
+            await Visa.updateOne({ _id: visa._id }, { $set: { pagamento: payment._id } })
+          }
         }
+
+        await Payment.updateOne({ client_secret: req.session.client_secret }, { $set: { visaIDs: visas, transaction_amount: qtyVisas * 1} })
+
+        res.render('checkout/index', {
+          title,
+          publishable_key,
+          client_secret: req.session.client_secret,
+          visas,
+          qtyVisas,
+          aplicacoes
+        })
       }
-
-      await Payment.updateOne({ client_secret: req.session.client_secret }, { $set: { visaIDs: visas, transaction_amount: qtyVisas * 49} })
-
-      res.render('checkout/index', {
-        title,
-        publishable_key,
-        client_secret: req.session.client_secret,
-        visas,
-        qtyVisas,
-        aplicacoes
-      })
+    } else {
+      req.flash('error_msg', 'Os campos na etapa 4 devem ser preenchidos.')
+      res.redirect(`/aplicacao?etapa=4`)
     }
+  } catch (err) {
+    console.log(err)
+    req.flash('error_msg', `${err}`)
+    res.redirect('/checkout')
   }
+  
 })
 
-router.get('/retry/:id', async (req, res) => {
-  const title = 'Checkout - '
-  const payment = Payment.findOne({_id: req.params.id})
+// router.get('/retry/:id', async (req, res) => {
+//   const title = 'Checkout - '
+//   const payment = await Payment.findOne({transactionId: req.params.id}).populate('visaIDs')
+//   const qtyVisas = payment.visaIDs.length
+//   const aplicacoes = payment.visaIDs
   
-  res.render('checkout/retry', { payment, title, publishable_key })
-})
+//   res.render('checkout/retry', { payment, client_secret: payment.client_secret, qtyVisas, aplicacoes, title, publishable_key })
+// })
+
+// router.post('/retry', (req, res) => {
+
+// })
 
 router.get('/status', (req, res) => {
   const sessionaData = req.session.aplicacaoStep
@@ -154,6 +170,7 @@ router.post('/webhook', async (req, res) => {
   const paymentIntent = event.data.object
 
   if (event.type === 'payment_intent.succeeded') {
+    console.log(paymentIntent)
     const payment = await Payment.findOne({_id: paymentIntent.metadata.internalPayment})
     for (const visaID of payment.visaIDs) {
       const visa = await Visa.findOne({ _id: visaID })
@@ -162,10 +179,10 @@ router.post('/webhook', async (req, res) => {
         transporter.use('compile', hbs(handlebarOptions))
 
         transporter.sendMail({
-          from: `eTA Canadense <${process.env.USER_MAIL}>`,
+          from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
           to: visa.contactEmail,
-          bcc: process.env.MAIL_RECEIPT,
-          subject: `Confirmação de Recebimento Código ${visa.codeETA} - Autorização Eletrônica de Viagem Canadense`,
+          bcc: process.env.CANADIANO_RECEIVER_MAIL,
+          subject: `Confirmação de Recebimento Código ${visa.codeETA} - Autorização Eletrônica de Viagem Canadiana`,
           template: 'aviso-eta',
         },
         (err, {response, envelope, messageId}) => {
@@ -179,8 +196,8 @@ router.post('/webhook', async (req, res) => {
 
         transporter.sendMail(
           {
-            from: `eTA Canadense <${process.env.USER_MAIL}>`,
-            to: process.env.MAIL_RECEIPT,
+            from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
+            to: process.env.CANADIANO_RECEIVER_MAIL,
             subject: 'Pagamento aprovado',
             template: 'pagamento-aprovado',
             context: {
@@ -199,9 +216,9 @@ router.post('/webhook', async (req, res) => {
       } /*else if (paymentIntent.status === 'requires_payment_method') {
         transporter.use('compile', hbs(handlebarOptions))
         transporter.sendMail({
-          from: `eTA Canadense <${process.env.USER_MAIL}>`,
+          from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
           to: visa.contactEmail,
-          bcc: 'contato@etacanadense.com.br',
+          bcc: 'contacto@etacanadiano.pt',
           subject: 'Pagamento recusado',
           template: 'pagamento-recusado',
           context: {

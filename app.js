@@ -71,7 +71,7 @@ const handle = handlebars.create({
                 
                 airplane ? output += `<p class="mb-2">Você está viajando para o Canadá de avião?</p><p class="d-inline-block alert-success p-1 mb-3">Sim</p>` : output += `<p class="mb-2">Você está viajando para o Canadá de avião?</p><p class="d-inline-block alert-danger p-1 mb-3">Não</p>`
 
-                canadaVisa ? output += `<p class="mb-2">Nos últimos 10 anos, você possuiu um visto canadense de residente temporário válido?</p><p class="d-inline-block alert-success p-1 mb-3">Sim</p>` : output += `<p class="mb-2">Nos últimos 10 anos, você possuiu um visto canadense de residente temporário válido?</p><p class="d-inline-block alert-danger p-1 mb-3">Não</p>`
+                canadaVisa ? output += `<p class="mb-2">Nos últimos 10 anos, você possuiu um visto canadiano de residente temporário válido?</p><p class="d-inline-block alert-success p-1 mb-3">Sim</p>` : output += `<p class="mb-2">Nos últimos 10 anos, você possuiu um visto canadiano de residente temporário válido?</p><p class="d-inline-block alert-danger p-1 mb-3">Não</p>`
 
                 nonImmigrateVisa ? output += `<p class="mb-2">Você atualmente possui um visto válido de não-imigrante nos EUA?</p><p class="d-inline-block alert-success p-1 mb-3">Sim</p>` : output += `<p class="mb-2">Você atualmente possui um visto válido de não-imigrante nos EUA?</p><p class="d-inline-block alert-danger p-1 mb-3">Não</p>`
             
@@ -158,7 +158,7 @@ const handle = handlebars.create({
 
                 canadaVisa ? 
                     output += `
-                        <label class="mt-3">Nos últimos 10 anos, você possuiu um visto canadense de residente temporário válido?</label>
+                        <label class="mt-3">Nos últimos 10 anos, você possuiu um visto canadiano de residente temporário válido?</label>
                         <div class="p-2 w-50 d-flex flex-row gap-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="canadaVisa" id="canadaVisa1" value="0" disabled required>
@@ -175,7 +175,7 @@ const handle = handlebars.create({
                         </div>
                     ` :
                     output += `
-                        <label class="mt-3">Nos últimos 10 anos, você possuiu um visto canadense de residente temporário válido?</label>
+                        <label class="mt-3">Nos últimos 10 anos, você possuiu um visto canadiano de residente temporário válido?</label>
                         <div class="p-2 w-50 d-flex flex-row gap-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="canadaVisa" id="canadaVisa1" value="0" checked required>
@@ -303,7 +303,7 @@ app.use(cors({
 }))
 app.use(express.static(path.join(__dirname, "public")))
 app.use(session({
-    secret: process.env.SECRET,
+    secret: process.env.CANADIANO_SECRET,
     resave: true,
     saveUninitialized: true
 }))
@@ -337,15 +337,18 @@ app.use((req, res, next) => {
 })
 
 //Mongoose
-    mongoose.set('strictQuery', true)
-    mongoose.connect(process.env.DB_STRING_CONNECT, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }).then(() => {
-        console.log("MONGODB CONNECTED")
-    }).catch((err) => {
-        console.log(`Erro: ${err}`)
+mongoose.set('strictQuery', true)
+mongoose.connect(process.env.CANADIANO_DB_STRING_CONNECT, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log({
+        date: new Date(),
+        message: "MONGODB ON"
     })
+}).catch((err) => {
+    console.log(`Erro: ${err}`)
+})
 
 app.post('/accept-policy', (req, res, next) => {
     //Setar cookie de aceite de política por 1 ano
@@ -371,6 +374,8 @@ app.get('/aplicacao', (req, res) => {
             req.session.aplicacaoStep = {}
             res.render('aplicacao-step1', { showPolicyPopup, title, data: req.session.aplicacaoStep, metaDescription })
         } else {
+            req.session.payment_id ? req.session.payment_id = "" : null
+            req.session.client_secret ? req.session.client_secret = "" : null
             req.session.visas ? req.session.visas.ids = [] : null
             res.render('aplicacao-step1', { showPolicyPopup, title, data: req.session.aplicacaoStep, metaDescription })
         }
@@ -558,7 +563,7 @@ app.post('/contact-form', (req, res) => {
     transporter.use('compile', hbs(handlebarOptions))
 
     const mailOptions = {
-        from: `eTA Canadiano <${process.env.USER_MAIL}>`,
+        from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
         to: process.env.MAIL_RECEIPT,
         subject: 'Formulário de Contacto',
         template: 'contacto',
@@ -578,7 +583,7 @@ app.post('/contact-form', (req, res) => {
         } else {
             console.log("Formulário de contacto: " + new Date())
             console.log({response, envelope, messageId})
-            req.flash('success_msg', `Formulário enviado com sucesso. Em breve a nossa equipe entrará em contacto.`)
+            req.flash('success_msg', `Formulário enviado com sucesso. Em breve a nossa equipa entrará em contacto.`)
             res.redirect('/contacto')
         }
     })
@@ -624,5 +629,8 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 3040
 app.listen(PORT, ()=> {
-    console.log("SERVER ON! PORT: " + PORT)
+    console.log({
+        date: new Date(),
+        message: `SERVER ON PORT: ${PORT}`
+    })
 })
