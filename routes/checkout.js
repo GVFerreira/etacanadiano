@@ -170,7 +170,6 @@ router.post('/webhook', async (req, res) => {
   const paymentIntent = event.data.object
 
   if (event.type === 'payment_intent.succeeded') {
-    console.log(paymentIntent)
     const payment = await Payment.findOne({_id: paymentIntent.metadata.internalPayment})
     for (const visaID of payment.visaIDs) {
       const visa = await Visa.findOne({ _id: visaID })
