@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
           //amount: qtyVisas * 4900,
           amount: qtyVisas * 100,
           description: 'Solicitação de Autorização de Viagem - Canadiano',
-          currency: 'EUR',
+          currency: 'BRL',
           receipt_email: aplicacoes[0].contactEmail,
           metadata: { internalPayment: "" },
           automatic_payment_methods: { enabled: true }
