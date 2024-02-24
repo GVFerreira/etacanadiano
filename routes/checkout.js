@@ -169,81 +169,67 @@ router.post('/webhook', async (req, res) => {
   const paymentIntent = event.data.object
 
   if (event.type === 'payment_intent.succeeded') {
-    const payment = await Payment.findOne({_id: paymentIntent.metadata.internalPayment})
-    for (const visaID of payment.visaIDs) {
-      const visa = await Visa.findOne({ _id: visaID })
-      
-      if (paymentIntent.status === 'succeeded') {
-        transporter.use('compile', hbs(handlebarOptions))
+    try {
+      const payment = await Payment.findOne({_id: paymentIntent.metadata.internalPayment})
 
-        transporter.sendMail({
-          from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
-          to: visa.contactEmail,
-          bcc: process.env.CANADIANO_RECEIVER_MAIL,
-          subject: `Confirmação de Recebimento Código ${visa.codeETA} - Autorização Eletrônica de Viagem Canadiana`,
-          template: 'aviso-eta',
-        },
-        (err, {response, envelope, messageId}) => {
-            if(err) {
-              console.error("Webhook (aviso-eta): " + new Date())
-              console.error(err)
-            } else {
-              console.log({origem: `Webhook (aviso-eta): ${new Date()}`, response, envelope, messageId})
-            }
-        })
+      if (payment) {
+        for (const visaID of payment.visaIDs) {
+          const visa = await Visa.findOne({ _id: visaID })
+          
+          if (paymentIntent.status === 'succeeded') {
+            transporter.use('compile', hbs(handlebarOptions))
 
-        transporter.sendMail(
-          {
-            from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
-            to: process.env.CANADIANO_RECEIVER_MAIL,
-            subject: 'Pagamento aprovado',
-            template: 'pagamento-aprovado',
-            context: {
-              nome: visa.firstName,
-              codeETA: visa.codeETA,
-            }
-          },
-          (err, {response, envelope, messageId}) => {
-              if(err) {
-                console.error("Webhook (pagamento-aprovado): " + new Date())
-                console.error(err)
-              } else {
-                console.log({origem: `Webhook (pagamento-aprovado): ${new Date()}`, response, envelope, messageId})
-              }
-          })
-      } /*else if (paymentIntent.status === 'requires_payment_method') {
-        transporter.use('compile', hbs(handlebarOptions))
-        transporter.sendMail({
-          from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
-          to: visa.contactEmail,
-          bcc: 'contacto@etacanadiano.pt',
-          subject: 'Pagamento recusado',
-          template: 'pagamento-recusado',
-          context: {
-            nome: visa.firstName,
-            codeETA: visa.codeETA,
-            transactionid: payment._id
-          }
-        },
-        (err, {response, envelope, messageId}) => {
-          if(err) {
-            console.error("Webhook (pagamento-recusado): " + new Date())
-            console.error(err)
-          } else {
-            console.log({origem: `Webhook (pagamento-recusado): ${new Date()}`, response, envelope, messageId})
-          }
-        })
-      }*/
-    }
+            transporter.sendMail({
+              from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
+              to: visa.contactEmail,
+              bcc: process.env.CANADIANO_RECEIVER_MAIL,
+              subject: `Confirmação de Recebimento Código ${visa.codeETA} - Autorização Eletrônica de Viagem Canadiana`,
+              template: 'aviso-eta',
+            },
+            (err, {response, envelope, messageId}) => {
+                if(err) {
+                  console.error("Webhook (aviso-eta): " + new Date())
+                  console.error(err)
+                } else {
+                  console.log({origem: `Webhook (aviso-eta): ${new Date()}`, response, envelope, messageId})
+                }
+            })
 
-    if(payment) {
-      await Payment.updateOne({ transactionId: paymentIntent.id },
-        { $set: { 
-            status: paymentIntent.status,
-            updatedAt: new Date(event.created * 1000).toISOString()
+            transporter.sendMail(
+              {
+                from: `eTA Canadiano <${process.env.CANADIANO_SENDER_MAIL}>`,
+                to: process.env.CANADIANO_RECEIVER_MAIL,
+                subject: 'Pagamento aprovado',
+                template: 'pagamento-aprovado',
+                context: {
+                  nome: visa.firstName,
+                  codeETA: visa.codeETA,
+                }
+              },
+              (err, {response, envelope, messageId}) => {
+                  if(err) {
+                    console.error("Webhook (pagamento-aprovado): " + new Date())
+                    console.error(err)
+                  } else {
+                    console.log({origem: `Webhook (pagamento-aprovado): ${new Date()}`, response, envelope, messageId})
+                  }
+              })
           }
         }
-      )
+
+        await Payment.updateOne({ transactionId: paymentIntent.id },
+          { $set: { 
+              status: paymentIntent.status,
+              updatedAt: new Date(event.created * 1000).toISOString()
+            }
+          }
+        )
+      }
+
+    } catch (err) {
+      console.error("Webhook: " + new Date())
+      console.error(err)
+      
     }
   }
   
