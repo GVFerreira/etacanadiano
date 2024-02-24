@@ -238,19 +238,55 @@ const handle = handlebars.create({
             switch (status) {
                 case 'succeeded':
                     return '<span class="alert-success p-1">Aprovado</span>'
-                    break
-    
+
+                case 'created':
+                    return '<span class="alert-warning p-1">Criado</span>'
+                
                 case 'processing':
                     return '<span class="alert-warning p-1">Processando</span>'
-                    break
-                
-                case 'Checkout em andamento':
-                return '<span class="alert-warning p-1">Checkout em andamento</span>'
-                break
-    
+
+                case 'requires_action':
+                    return '<span class="alert-warning p-1">Requer aprovação</span>'
+
+                case 'amount_capturable_updated':
+                    return '<span class="alert-warning p-1">Valor capturado alterado</span>'
+                    
                 case 'requires_payment_method':
                     return '<span class="alert-danger p-1">Recusado</span>'
-                    break
+
+                case 'canceled':
+                    return '<span class="alert-danger p-1">Cancelado</span>'
+
+                case 'payment_failed':
+                    return '<span class="alert-danger p-1">Falha no pagamento</span>'
+
+                case 'partially_funded':
+                    return '<span class="alert-danger p-1">Pago parcialmente</span>'
+                
+                default:
+                    return '<span class="alert-warning p-1">Checkout em andamento</span>'
+            }
+        },
+        styleBorderPayment: (status) => {
+            
+            switch (status) {
+                case 'succeeded':
+                    return 'success'
+
+                case 'Checkout em andamento':
+                case 'created':
+                case 'processing':
+                case 'requires_action':
+                case 'amount_capturable_updated':
+                    return 'warning'
+
+                case 'canceled':
+                case 'payment_failed':
+                case 'partially_funded':
+                    return 'danger'
+               
+                default:
+                    return 'secondary'
             }
         }
     }
@@ -528,16 +564,21 @@ app.get('/acompanhar-solicitacao', (req, res) => {
 })
 
 app.post('/consultando-solicitacao', (req, res) => {
-    if(req.body.codeInsert === undefined || req.body.codeInsert === null || req.body.codeInsert === '') {
-        req.flash('error_msg', 'Insira um e-mail ou código')
+    const codeInsert = `${req.body.codeInsert}`.trim()
+    if(codeInsert === undefined || codeInsert === null || codeInsert === '') {
+        req.flash('error_msg', 'Insira um e-mail, código ou passaporte')
         res.redirect('/acompanhar-solicitacao')
     } else {
-        if (req.body.EmailCod === 'email') {
+        if (req.body.filtroSelecionado === 'email') {
             Visa.find({contactEmail: req.body.codeInsert}).populate('pagamento').then((search_result) => {
                 res.render('status-solicitacao', { search_result })
             })
-        } else {
+        } else if (req.body.filtroSelecionado === 'codigo') {
             Visa.find({codeETA: req.body.codeInsert}).populate('pagamento').then((search_result) => {
+                res.render('status-solicitacao', { search_result })
+            })
+        } else if (req.body.filtroSelecionado === 'passaporte') {
+            Visa.find({numPassport: req.body.codeInsert}).populate('pagamento').then((search_result) => {
                 res.render('status-solicitacao', { search_result })
             })
         }

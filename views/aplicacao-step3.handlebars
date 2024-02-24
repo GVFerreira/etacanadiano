@@ -36,7 +36,6 @@
             <hr>
             {{#each errors}}
                 <div class="alert alert-danger">{{text}}</div>
-            {{else}}
             {{/each}}
             <h2>Progresso da sua solicitação</h2>
             <div class="progress mt-3 mb-5" style="height: 25px;">
@@ -554,7 +553,6 @@
                     </select>
                     <button class="btn btn-success mb-3" id="addNationality" type="button">Adicionar</button>
                 </div>
-
                 <div id="nationalities" class="pb-3"></div>
                 <input type="text" name="nationalitiesExtra" id="nationalitiesExtra" class="form-control w-50 d-none">
 
@@ -967,8 +965,8 @@
                 <div id="dynamicTuberculosis"></div>
                 
                 <label for="theseConditions">Você tem uma dessas condições? <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="theseConditions" name="theseConditions" required>
-                    <option selected disabled>Por favor selecione</option>
+                <select class="form-select mb-3 w-50" name="theseConditions" id="theseConditions" required>
+                    <option value="" selected disabled>Por favor selecione</option>
                     <option value="Sífilis não tratada">Sífilis não tratada</option>
                     <option value="Dependência de drogas ou álcool não tratada">Dependência de drogas ou álcool não tratada</option>
                     <option value="Condição de saúde mental não tratada com psicose">Condição de saúde mental não tratada com psicose</option>
@@ -1021,6 +1019,7 @@
         </div>
     </section>
 </main>
+
 <script>
     function showUCI(value) {
          let dynamicUCI = document.getElementById('dynamicUCI')
@@ -1297,7 +1296,7 @@
             <input type="text" class="form-control mb-3 w-50" id="employmentCity"  name="employmentCity">
 
             <label class="mb-2" for="employmentFromDateYear">Desde que ano? <span class="text-red">* (obrigatório)</span></label>
-            <select class="form-select w-50 mb-3" name="employmentFromDateYear" id="employmentFromDateYear">
+            <select class="form-select w-50 mb-3" name="employmentFromDateYear" id="employmentFromDateYear" required>
                 <option selected disabled>Selecione o ano</option>
                 <option value="2024">2024</option>
                 <option value="2023">2023</option>
@@ -1430,7 +1429,7 @@
         if (value == 'Ocupações artísticas, culturais, recreativas e desportivas') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Locutores e outros artistas">Locutores e outros artistas</option>
                     <option value="Atletas, treinadores, árbitros e ocupações relacionadas">Atletas, treinadores, árbitros e ocupações relacionadas</option>
@@ -1447,7 +1446,7 @@
         } else if (value == 'Ocupações de negócios, finanças e administração') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Ocupações administrativas e regulatórias">Ocupações administrativas e regulatórias</option>
                     <option value="Supervisores de serviços administrativos">Supervisores de serviços administrativos</option>
@@ -1469,7 +1468,7 @@
         } else if (value == 'Educação, direito e ocupações de serviços sociais, comunitários e governamentais') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Colégio e outros instrutores vocacionais">Colégio e outros instrutores vocacionais</option>
                     <option value="Provedores de cuidados domiciliares e ocupações de apoio educacional">Provedores de cuidados domiciliares e ocupações de apoio educacional</option>
@@ -1488,7 +1487,7 @@
         } else if (value == 'Ocupações de saúde') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Auxiliar ocupações em apoio aos serviços de saúde">Auxiliar ocupações em apoio aos serviços de saúde</option>
                     <option value="Tecnólogos e técnicos médicos">Tecnólogos e técnicos médicos</option>
@@ -1510,7 +1509,7 @@
         } else if (value == 'Ocupações de gestão') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Gerentes de serviços administrativos">Gerentes de serviços administrativos</option>
                     <option value="Gerentes de vendas corporativas">Gerentes de vendas corporativas</option>
@@ -1538,7 +1537,7 @@
         } else if (value == 'Ocupações de manufatura e serviços públicos') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Controle central e operadores de processo em processamento e fabricação">Controle central e operadores de processo em processamento e fabricação</option>
                     <option value="Trabalhadores em processamento, fabricação e serviços públicos">Trabalhadores em processamento, fabricação e serviços públicos</option>
@@ -1560,7 +1559,7 @@
         } else if (value == 'Forças militares/armadas') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Oficial de Controle Aeroespacial">Oficial de Controle Aeroespacial</option>
                     <option value="Operador de Controle Aeroespacial">Operador de Controle Aeroespacial</option>
@@ -1637,7 +1636,7 @@
         } else if (value == 'Ciências naturais e aplicadas e ocupações relacionadas') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Arquitetos, urbanistas e agrimensores">Arquitetos, urbanistas e agrimensores</option>
                     <option value="Engenheiros civis, mecânicos, elétricos e químicos">Engenheiros civis, mecânicos, elétricos e químicos</option>
@@ -1661,7 +1660,7 @@
         } else if (value == 'Recursos naturais, agricultura e ocupações de produção relacionadas') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Trabalhadores da agricultura e horticultura">Trabalhadores da agricultura e horticultura</option>
                     <option value="Empreiteiros e supervisores em agricultura, horticultura e operações e serviços relacionados">Empreiteiros e supervisores em agricultura, horticultura e operações e serviços relacionados</option>
@@ -1685,7 +1684,7 @@
         } else if (value == 'Ocupações de vendas e serviços') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Açougueiros e padeiros">Açougueiros e padeiros</option>
                     <option value="caixas">caixas</option>
@@ -1718,7 +1717,7 @@
         } else if (value == 'Operadores de comércio, transporte e equipamentos e ocupações relacionadas') {
             boxEmploymentTitle.innerHTML += `
                 <label for="employmentTitle" class="mb-2">Cargo <span class="text-red">* (obrigatório)</span></label>
-                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle">
+                <select class="form-select mb-3 w-50" id="employmentTitle" name="employmentTitle" required>
                     <option selected disabled>Por favor selecione</option>
                     <option value="Técnicos de serviços automotivos">Técnicos de serviços automotivos</option>
                     <option value="Carpinteiros e marceneiros">Carpinteiros e marceneiros</option>
@@ -1762,12 +1761,12 @@
         if(parseInt(value)) {
             dynamicTravel.innerHTML += `
                 <label for="travelDate">Quando você pretende viajar para o Canadá? <span class="text-red">* (obrigatório)</span></label>
-                <input type="date" class="form-control mb-3 w-25" name="travelDate" id="travelDate" onblur="validNotPresentDay(this)" value={{data.travelDate}} required>
+                <input type="date" class="form-control mb-3 w-25" name="travelDate" id="travelDate" onblur="validNotPresentDay(this)" value="{{data.travelDate}}" required>
                 
                 <label>Insira o horário de partida do seu voo para o Canadá <span class="text-red">* (obrigatório)</span></label>
                 <div class="row">
                     <div class="col-6">
-                        <input type="time" class="form-control mb-3" name="travelTime" id="travelTime" min="00:00" max="24:00" value="{{data.travelTime}}">
+                        <input type="time" class="form-control mb-3" name="travelTime" id="travelTime" min="00:00" max="24:00" value="{{data.travelTime}}" required>
                     </div>
                     <div class="col-6">
                         <select class="form-select mb-3" name="travelTimeZone" id="travelTimeZone" required>
